@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Status-bar icon for the ephemeral foreground service notification.
+
+  Declared here rather than in :app because the notification is built in this module and a
+  small icon is mandatory: passing 0 makes the platform reject the notification and the
+  foreground service start fails. Single-colour and fully opaque, as the status bar requires
+  (it applies its own tint and discards colour information).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFFFF">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M4,10h2v4H4zM8,7h2v10H8zM12,4h2v16h-2zM16,8h2v8h-2zM20,11h2v2h-2z" />
+</vector>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  :core:system is a pure adapter library.
+
+  It declares NO components and NO permissions on purpose:
+
+  * Components (the alarm receiver, the boot receiver, the tile, the widget) live in
+    :app, where the closed permission whitelist and the manifest verifier of the CI
+    pipeline can see all of them in one place.
+  * ApplyProfileService is *defined* here but must be *declared* by :app, together with
+    its foregroundServiceType and its special-use subtype property. A library that
+    silently injected a foreground service into every consumer's manifest would defeat
+    the "closed whitelist" rule the project enforces in CI.
+
+  See docs/03-PLAN-DESARROLLO.md section 8 for the exact entries :app is expected to add.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" />

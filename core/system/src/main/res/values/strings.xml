@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The only strings this module owns: the ones the platform forces a foreground service to
+  show. Everything else user-facing lives in :feature:* / :core:ui.
+  Names are prefixed with core_system_ so a library resource can never be shadowed by an
+  identically named string in :app after manifest and resource merging.
+-->
+<resources>
+    <string name="core_system_channel_transitions">Profile changes</string>
+    <string name="core_system_channel_transitions_description">Shown briefly while a scheduled sound profile is being applied.</string>
+    <string name="core_system_applying_profile">Applying sound profile…</string>
+</resources>

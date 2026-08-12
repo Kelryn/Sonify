@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_system_channel_transitions">Cambios de perfil</string>
+    <string name="core_system_channel_transitions_description">Se muestra brevemente mientras se aplica un perfil de sonido programado.</string>
+    <string name="core_system_applying_profile">Aplicando perfil de sonido…</string>
+</resources>
