@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Deliberately empty.
+
+    :core:data owns the database, preferences and the backup file. It touches no system
+    service, starts no component and needs no permission: everything that does lives in
+    :core:system and :app. Keeping this manifest empty is what makes that claim
+    reviewable at a glance, and it keeps the merged manifest of the app free of
+    permissions nobody can trace back to a feature (D4, zero unnecessary permissions).
+-->
+<manifest />
