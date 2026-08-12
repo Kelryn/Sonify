@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_title">Actividad</string>
+    <string name="history_empty_title">Todavía no ha pasado nada</string>
+    <string name="history_empty_body">Aquí se registra cada cambio que SonoRitmo hace en tu sonido, con la regla que lo provocó.</string>
+    <string name="history_filter_all">Todo</string>
+    <string name="history_filter_failures">Solo problemas</string>
+    <string name="history_success">Aplicado</string>
+    <string name="history_failure">Falló</string>
+
+    <string name="reason_schedule_start">Empezó un horario</string>
+    <string name="reason_schedule_end">Terminó un horario</string>
+    <string name="reason_manual_activation">Lo activaste tú</string>
+    <string name="reason_manual_expired">Caducó la activación manual</string>
+    <string name="reason_pause_start">Reglas en pausa</string>
+    <string name="reason_pause_end">Reglas reanudadas</string>
+    <string name="reason_boot">Recuperado tras reiniciar</string>
+    <string name="reason_locked_boot">Recuperado antes de desbloquear</string>
+    <string name="reason_watchdog">Desviación corregida</string>
+    <string name="reason_time_changed">Cambió la hora</string>
+    <string name="reason_timezone_changed">Cambió la zona horaria</string>
+    <string name="reason_app_updated">La app se actualizó</string>
+    <string name="reason_permission_lost">Permiso revocado</string>
+    <string name="reason_permission_granted">Permiso concedido</string>
+    <string name="reason_skipped_call">Omitido: estabas en una llamada</string>
+    <string name="reason_skipped_media">Omitido: había algo reproduciéndose</string>
+    <string name="reason_skipped_stale">Omitido: no había nada reciente que restaurar</string>
+    <string name="reason_security">Bloqueado: falta el acceso a No molestar</string>
+    <string name="reason_silently_ignored">Android ignoró el cambio</string>
+    <string name="reason_volume_fixed">Este dispositivo tiene el volumen fijo</string>
+    <string name="reason_zen_limit">Demasiados modos del sistema</string>
+    <string name="reason_zen_overridden">Otro modo está anulando el nuestro</string>
+    <string name="reason_force_stop">Tu móvil detuvo SonoRitmo</string>
+    <string name="reason_import">Configuración importada</string>
+    <string name="reason_unchanged">Nada que cambiar</string>
+
+    <string name="diagnostics_title">Salud</string>
+    <string name="diagnostics_ok">Todo parece correcto</string>
+    <string name="diagnostics_degraded">Hay cosas que necesitan tu atención</string>
+    <string name="diagnostics_dnd">Acceso a No molestar</string>
+    <string name="diagnostics_dnd_why">Sin él la app no puede silenciar el timbre ni fijar un modo.</string>
+    <string name="diagnostics_exact_alarms">Alarmas exactas</string>
+    <string name="diagnostics_exact_alarms_why">Sin ellas los horarios llegan tarde, a veces 15 minutos.</string>
+    <string name="diagnostics_notifications">Notificaciones</string>
+    <string name="diagnostics_battery">Optimización de batería</string>
+    <string name="diagnostics_battery_why">Tu móvil puede detener la app mientras duermes, que es justo cuando corre el horario de noche.</string>
+    <string name="diagnostics_bucket">Nivel de actividad según Android: %1$s</string>
+    <string name="diagnostics_alarm_pending">Próximo cambio programado</string>
+    <string name="diagnostics_alarm_missing">No hay ningún cambio programado</string>
+    <string name="diagnostics_repairs">Veces que el vigilante lo ha arreglado: %1$d</string>
+    <string name="diagnostics_volume_fixed">Este dispositivo tiene el nivel de salida fijo; los cambios de volumen no hacen nada.</string>
+    <string name="diagnostics_force_stop">Tu móvil forzó la detención de SonoRitmo. Desde entonces y hasta que la abriste, no se aplicó ninguna regla.</string>
+    <string name="diagnostics_vendor">Tu móvil (%1$s) es conocido por detener apps en segundo plano de forma agresiva.</string>
+    <string name="diagnostics_grant">Conceder</string>
+    <string name="diagnostics_open_settings">Abrir ajustes</string>
+    <string name="diagnostics_max_reliability">Modo de máxima fiabilidad</string>
+    <string name="diagnostics_max_reliability_why">Usa el programador de despertador, que ningún ahorro de batería puede aplazar. Pone un icono de alarma en la barra de estado.</string>
+
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_system">Seguir al sistema</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Oscuro</string>
+    <string name="settings_dynamic_color">Usar los colores de mi fondo</string>
+    <string name="settings_default_profile">Perfil que se aplica cuando no hay nada programado</string>
+    <string name="settings_default_none">Restaurar lo que hubiera antes</string>
+    <string name="settings_backup">Copia de seguridad</string>
+    <string name="settings_diagnostics">Salud y permisos</string>
+    <string name="settings_about">Acerca de</string>
+    <string name="settings_privacy">Esta app no tiene permiso de internet. Compruébalo tú mismo en el manifiesto.</string>
+
+    <string name="backup_title">Copia de seguridad</string>
+    <string name="backup_export">Exportar a un archivo</string>
+    <string name="backup_import">Importar desde un archivo</string>
+    <string name="backup_export_done">Exportados %1$d perfiles</string>
+    <string name="backup_import_done">Importados %1$d perfiles</string>
+    <string name="backup_import_failed">No se ha podido leer ese archivo</string>
+    <string name="backup_import_corrections">Se han ajustado %1$d valores para este dispositivo</string>
+    <string name="backup_mode_merge">Combinar con lo que tengo</string>
+    <string name="backup_mode_replace">Reemplazarlo todo</string>
+</resources>

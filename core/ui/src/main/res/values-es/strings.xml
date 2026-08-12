@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_days_every_day">Todos los días</string>
+    <string name="ui_days_weekdays">De lunes a viernes</string>
+    <string name="ui_days_weekend">Fin de semana</string>
+    <string name="ui_day_separator">", "</string>
+    <string name="ui_schedule_range">%1$s – %2$s</string>
+    <string name="ui_schedule_full">%1$s · %2$s</string>
+    <string name="ui_schedule_crosses_midnight">%1$s (día siguiente)</string>
+    <string name="ui_duration_hours_minutes">%1$d h %2$d min</string>
+    <string name="ui_duration_hours">%1$d h</string>
+    <string name="ui_duration_minutes">%1$d min</string>
+    <string name="ui_stream_ring">Tono de llamada</string>
+    <string name="ui_stream_notification">Notificaciones</string>
+    <string name="ui_stream_music">Multimedia</string>
+    <string name="ui_stream_alarm">Alarma</string>
+    <string name="ui_stream_system">Sonidos del sistema</string>
+    <string name="ui_stream_voice_call">En llamada</string>
+    <string name="ui_stream_accessibility">Accesibilidad</string>
+    <string name="ui_ringer_normal">Con sonido</string>
+    <string name="ui_ringer_vibrate">Vibración</string>
+    <string name="ui_ringer_silent">Silencio</string>
+    <string name="ui_volume_percent">%1$d %%</string>
+    <string name="ui_volume_untouched">Sin cambios</string>
+</resources>

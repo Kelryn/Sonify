@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_title">Activity</string>
+    <string name="history_empty_title">Nothing has happened yet</string>
+    <string name="history_empty_body">Every change SonoRitmo makes to your sound is recorded here, with the rule that caused it.</string>
+    <string name="history_filter_all">All</string>
+    <string name="history_filter_failures">Problems only</string>
+    <string name="history_success">Applied</string>
+    <string name="history_failure">Failed</string>
+
+    <string name="reason_schedule_start">Schedule started</string>
+    <string name="reason_schedule_end">Schedule ended</string>
+    <string name="reason_manual_activation">Activated by you</string>
+    <string name="reason_manual_expired">Manual activation expired</string>
+    <string name="reason_pause_start">Rules paused</string>
+    <string name="reason_pause_end">Rules resumed</string>
+    <string name="reason_boot">Recovered after restart</string>
+    <string name="reason_locked_boot">Recovered before unlock</string>
+    <string name="reason_watchdog">Drift repaired</string>
+    <string name="reason_time_changed">Clock changed</string>
+    <string name="reason_timezone_changed">Time zone changed</string>
+    <string name="reason_app_updated">App updated</string>
+    <string name="reason_permission_lost">Permission revoked</string>
+    <string name="reason_permission_granted">Permission granted</string>
+    <string name="reason_skipped_call">Skipped: you were on a call</string>
+    <string name="reason_skipped_media">Skipped: media was playing</string>
+    <string name="reason_skipped_stale">Skipped: nothing recent to restore</string>
+    <string name="reason_security">Blocked: Do Not Disturb access missing</string>
+    <string name="reason_silently_ignored">Android ignored the change</string>
+    <string name="reason_volume_fixed">This device has a fixed volume</string>
+    <string name="reason_zen_limit">Too many system modes</string>
+    <string name="reason_zen_overridden">Another mode is overriding ours</string>
+    <string name="reason_force_stop">Your phone stopped SonoRitmo</string>
+    <string name="reason_import">Configuration imported</string>
+    <string name="reason_unchanged">Nothing to change</string>
+
+    <string name="diagnostics_title">Health</string>
+    <string name="diagnostics_ok">Everything looks right</string>
+    <string name="diagnostics_degraded">Some things need your attention</string>
+    <string name="diagnostics_dnd">Do Not Disturb access</string>
+    <string name="diagnostics_dnd_why">Without it the app cannot silence the ringer or set a mode.</string>
+    <string name="diagnostics_exact_alarms">Exact alarms</string>
+    <string name="diagnostics_exact_alarms_why">Without them schedules run late, sometimes by 15 minutes.</string>
+    <string name="diagnostics_notifications">Notifications</string>
+    <string name="diagnostics_battery">Battery optimisation</string>
+    <string name="diagnostics_battery_why">Your phone may stop the app while you sleep, which is exactly when the night schedule runs.</string>
+    <string name="diagnostics_bucket">Android activity level: %1$s</string>
+    <string name="diagnostics_alarm_pending">Next change scheduled</string>
+    <string name="diagnostics_alarm_missing">No change is scheduled</string>
+    <string name="diagnostics_repairs">Times the watchdog fixed things: %1$d</string>
+    <string name="diagnostics_volume_fixed">This device has a fixed output level; volume changes do nothing.</string>
+    <string name="diagnostics_force_stop">Your phone force-stopped SonoRitmo. Between then and the moment you opened it, no rule ran.</string>
+    <string name="diagnostics_vendor">Your phone (%1$s) is known to stop background apps aggressively.</string>
+    <string name="diagnostics_grant">Grant</string>
+    <string name="diagnostics_open_settings">Open settings</string>
+    <string name="diagnostics_max_reliability">Maximum reliability mode</string>
+    <string name="diagnostics_max_reliability_why">Uses the alarm-clock scheduler, which no battery saver can defer. It puts an alarm icon in your status bar.</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_system">Follow the system</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_dynamic_color">Use my wallpaper colours</string>
+    <string name="settings_default_profile">Profile to apply when nothing is scheduled</string>
+    <string name="settings_default_none">Restore what was there before</string>
+    <string name="settings_backup">Backup</string>
+    <string name="settings_diagnostics">Health and permissions</string>
+    <string name="settings_about">About</string>
+    <string name="settings_privacy">This app has no internet permission. Check the manifest yourself.</string>
+
+    <string name="backup_title">Backup</string>
+    <string name="backup_export">Export to a file</string>
+    <string name="backup_import">Import from a file</string>
+    <string name="backup_export_done">Exported %1$d profiles</string>
+    <string name="backup_import_done">Imported %1$d profiles</string>
+    <string name="backup_import_failed">That file could not be read</string>
+    <string name="backup_import_corrections">%1$d values were adjusted to fit this device</string>
+    <string name="backup_mode_merge">Merge with what I have</string>
+    <string name="backup_mode_replace">Replace everything</string>
+</resources>

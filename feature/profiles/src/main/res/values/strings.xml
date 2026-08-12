@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profiles_title">Profiles</string>
+    <string name="profiles_add">New profile</string>
+    <string name="profiles_from_template">Start from a template</string>
+    <string name="profiles_empty_title">No profiles yet</string>
+    <string name="profiles_empty_body">A profile is a complete sound state: every volume, the ringer and Do Not Disturb. Start from a template and adjust it later.</string>
+    <string name="profiles_empty_action">Choose a template</string>
+
+    <string name="banner_active_title">%1$s is on</string>
+    <string name="banner_active_manual">Activated by you</string>
+    <string name="banner_active_until">Ends at %1$s</string>
+    <string name="banner_active_indefinite">Stays on until you change it</string>
+    <string name="banner_idle_title">Nothing active</string>
+    <string name="banner_idle_next">%1$s starts at %2$s</string>
+    <string name="banner_idle_no_next">No scheduled profile ahead</string>
+    <string name="banner_paused_title">All rules paused</string>
+    <string name="banner_paused_until">Resumes at %1$s</string>
+    <string name="banner_paused_action">Resume</string>
+    <string name="banner_degraded_title">Needs a permission</string>
+    <string name="banner_degraded_dnd">Without Do Not Disturb access the app cannot silence the ringer.</string>
+    <string name="banner_degraded_alarms">Exact alarms are off, so schedules may run up to 15 minutes late.</string>
+    <string name="banner_degraded_action">Fix</string>
+    <string name="banner_summary_active">%1$s is active. %2$s</string>
+    <string name="banner_summary_idle">No profile is active. %1$s</string>
+    <string name="banner_summary_paused">All rules are paused. %1$s</string>
+    <string name="banner_summary_degraded">The app needs a permission. %1$s</string>
+
+    <string name="profile_activate">Activate %1$s</string>
+    <string name="profile_state_active">Active</string>
+    <string name="profile_state_inactive">Inactive</string>
+    <string name="profile_state_disabled">Disabled</string>
+    <string name="profile_edit">Edit %1$s</string>
+    <string name="profile_more">More options for %1$s</string>
+    <string name="profile_no_schedule">Manual only</string>
+    <string name="profile_duplicate">Duplicate</string>
+    <string name="profile_delete">Delete</string>
+    <string name="profile_disable">Disable</string>
+    <string name="profile_enable">Enable</string>
+    <string name="profile_activate_for">Activate for…</string>
+
+    <string name="duration_30_min">30 minutes</string>
+    <string name="duration_1_hour">1 hour</string>
+    <string name="duration_2_hours">2 hours</string>
+    <string name="duration_until_tomorrow">Until tomorrow</string>
+    <string name="duration_indefinite">Until I turn it off</string>
+
+    <string name="pause_all">Pause all rules</string>
+    <string name="resume_all">Resume rules</string>
+
+    <string name="msg_activated">%1$s activated</string>
+    <string name="msg_deactivated">Back to the schedule</string>
+    <string name="msg_deleted">%1$s deleted</string>
+    <string name="msg_duplicated">%1$s duplicated</string>
+    <string name="msg_pause_started">Rules paused</string>
+    <string name="msg_pause_cleared">Rules resumed</string>
+    <string name="msg_save_failed">Could not save</string>
+
+    <string name="template_night">Night</string>
+    <string name="template_work">Work</string>
+    <string name="template_meeting">Meeting</string>
+    <string name="template_cinema">Cinema</string>
+    <string name="template_driving">Driving</string>
+    <string name="template_weekend">Weekend</string>
+
+    <string name="editor_title_new">New profile</string>
+    <string name="editor_title_edit">Edit profile</string>
+    <string name="editor_name">Name</string>
+    <string name="editor_section_volumes">Volumes</string>
+    <string name="editor_section_ringer">Ringer</string>
+    <string name="editor_section_dnd">Do Not Disturb</string>
+    <string name="editor_section_schedules">Schedules</string>
+    <string name="editor_section_options">Options</string>
+    <string name="editor_ringer_unchanged">Leave as it is</string>
+    <string name="editor_priority">Priority: %1$d</string>
+    <string name="editor_priority_help">When two schedules overlap, the higher priority wins.</string>
+    <string name="editor_restore_on_exit">Restore previous sound when it ends</string>
+    <string name="editor_skip_during_call">Do not change anything during a call</string>
+    <string name="editor_skip_media">Do not lower media while something is playing</string>
+    <string name="editor_transition">Fade over %1$d s</string>
+    <string name="editor_transition_none">Change instantly</string>
+    <string name="editor_save">Save</string>
+    <string name="editor_add_schedule">Add a schedule</string>
+    <string name="editor_stream_unsupported">Android does not let apps change this one</string>
+    <string name="editor_ring_coupled">On this device the ringtone and notification volumes move together</string>
+    <string name="editor_dnd_mode">Mode</string>
+    <string name="editor_dnd_release">Release my rule</string>
+    <string name="editor_dnd_priority">Priority only</string>
+    <string name="editor_dnd_alarms">Alarms only</string>
+    <string name="editor_dnd_total">Total silence</string>
+    <string name="editor_dnd_calls">Allow calls from</string>
+    <string name="editor_dnd_repeat">Allow repeat callers</string>
+    <string name="editor_dnd_note">SonoRitmo can turn Do Not Disturb on, but Android does not let any app turn off a mode someone else switched on.</string>
+    <string name="editor_volume_of">%1$s at %2$s</string>
+    <string name="editor_volume_toggle">Control %1$s</string>
+
+    <string name="schedule_editor_title">Schedule</string>
+    <string name="schedule_from">Starts at</string>
+    <string name="schedule_to">Ends at</string>
+    <string name="schedule_days">Days</string>
+    <string name="schedule_delete">Delete schedule</string>
+    <string name="schedule_duration">Lasts %1$s</string>
+</resources>
