@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SonoRitmo</string>
+    <string name="nav_profiles">Perfiles</string>
+    <string name="nav_history">Actividad</string>
+    <string name="nav_settings">Ajustes</string>
+
+    <string name="tile_label">SonoRitmo</string>
+    <string name="tile_idle">Sin perfil</string>
+    <string name="tile_idle_description">No hay ningún perfil activo. Toca para pausar todas las reglas.</string>
+    <string name="tile_paused">En pausa</string>
+    <string name="tile_paused_description">Las reglas están en pausa. Toca para reanudarlas.</string>
+    <string name="tile_active_description">%1$s está activo. Toca para pausar todas las reglas.</string>
+
+    <string name="widget_idle">Sin perfil</string>
+    <string name="widget_idle_subtitle">Esperando al siguiente horario</string>
+    <string name="widget_paused">En pausa</string>
+    <string name="widget_paused_subtitle">Reglas suspendidas</string>
+    <string name="widget_active_subtitle">Activo ahora</string>
+    <string name="widget_description">Muestra el perfil de sonido activo</string>
+
+    <string name="fgs_special_use_subtype">Aplica el perfil de sonido programado por el usuario y su transición, y se detiene.</string>
+
+</resources>

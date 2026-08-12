@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      The permission list is a closed allow-list, and CI fails the build if anything
+      outside it appears in the merged manifest.
+
+      There is deliberately NO android.permission.INTERNET. That is a checkable promise,
+      not a marketing claim: the app has no backend, no analytics and no crash reporting,
+      and anyone can verify it here in thirty seconds.
+
+      Also deliberately absent:
+        * READ_PHONE_STATE          — AudioManager.getMode() detects calls with no
+                                      permission at all, and covers VoIP too.
+        * USE_EXACT_ALARM           — Play policy reserves it for calendar and alarm-clock
+                                      apps. A sound-profile app does not qualify.
+        * REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                                    — a frequent cause of Play rejection. The diagnostics
+                                      screen opens the system list instead, which needs no
+                                      permission.
+        * WRITE_SETTINGS            — would be needed for VIBRATE_WHEN_RINGING, which is
+                                      deprecated and which the platform tells apps not to
+                                      write. RINGER_MODE_VIBRATE covers the real case.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
+    <!--
+      Package visibility (Android 11+). Without this block, `resolveActivity` returns null
+      for every one of these and the manufacturer guidance in the diagnostics screen
+      silently degrades to the two generic AOSP fallbacks — on exactly the devices that
+      need the guidance most. Keep in sync with OemGuidance.QUERIED_PACKAGES.
+    -->
+    <queries>
+        <package android:name="com.miui.securitycenter" />
+        <package android:name="com.miui.powerkeeper" />
+        <package android:name="com.huawei.systemmanager" />
+        <package android:name="com.coloros.safecenter" />
+        <package android:name="com.oppo.safe" />
+        <package android:name="com.oneplus.security" />
+        <package android:name="com.vivo.permissionmanager" />
+        <package android:name="com.iqoo.secure" />
+        <package android:name="com.samsung.android.lool" />
+    </queries>
+
+    <application
+        android:name=".SonoRitmoApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.SonoRitmo"
+        tools:targetApi="34">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SonoRitmo">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!--
+              Deep links use the sonoritmo:// scheme rather than https://. An http scheme
+              in an app that declares no INTERNET permission would raise a fair question
+              about what it is talking to.
+            -->
+            <intent-filter android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="sonoritmo" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          The zen rule's configuration activity. The platform refuses to register an
+          AutomaticZenRule without either this or a ConditionProviderService, and the
+          service route would need BIND_CONDITION_PROVIDER_SERVICE — another special
+          access the user has to grant. This is the cheap half of that choice.
+        -->
+        <activity-alias
+            android:name=".ZenRuleConfigActivity"
+            android:exported="true"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.service.notification.action.AUTOMATIC_ZEN_RULE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity-alias>
+
+        <!--
+          Ephemeral foreground service that applies a profile and its ramp, then stops.
+
+          Type is specialUse, not shortService: from Android 17 background audio hardening
+          silently ignores setStreamVolume and setRingerMode from the background unless the
+          app has a visible activity or a foreground service that is NOT shortService. The
+          failure mode is the worst possible one — no exception, no error, nothing happens
+          — so the service type is load-bearing, not ceremonial.
+        -->
+        <service
+            android:name="com.sonoritmo.core.system.service.ApplyProfileService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="@string/fgs_special_use_subtype" />
+        </service>
+
+        <!-- Our own alarm. Never sent by anything else, so it stays private. -->
+        <receiver
+            android:name=".receiver.TransitionAlarmReceiver"
+            android:directBootAware="true"
+            android:exported="false">
+            <intent-filter>
+                <!--
+                  Must match TransitionPendingIntents.ACTION_RECONCILE exactly. If these
+                  two strings ever drift apart the alarm fires into nothing and every
+                  scheduled transition is silently lost, which is the single worst bug
+                  this app could ship.
+                -->
+                <action android:name="com.sonoritmo.action.RECONCILE" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+          exported="true" on the system broadcasts below is intentional and not a mistake:
+          they are protected broadcasts that only the system can send, and there are
+          documented devices where exported="false" prevents BOOT_COMPLETED from being
+          delivered at all.
+        -->
+        <receiver
+            android:name=".receiver.BootReceiver"
+            android:directBootAware="true"
+            android:exported="true">
+            <intent-filter>
+                <!-- Arrives before the user unlocks on file-encrypted devices. -->
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <!-- A handful of OEMs send these instead of the standard one. -->
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".receiver.TimeChangeReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Package-directed broadcast, so it needs no export. -->
+        <receiver
+            android:name=".receiver.PackageReplacedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".receiver.ExactAlarmPermissionReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+          The tile is not a convenience. onStartListening fires whenever the user opens the
+          shade, and that is the closest thing left to "the user just unlocked the phone"
+          now that ACTION_USER_PRESENT cannot be declared in a manifest.
+        -->
+        <service
+            android:name=".tile.SonoRitmoTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_tile_sonoritmo"
+            android:label="@string/tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.quicksettings.ACTIVE_TILE"
+                android:value="false" />
+        </service>
+
+        <!--
+          An app with an active widget is exempt from the `restricted` standby bucket,
+          which is the one that allows a single alarm per day. That makes the widget a
+          reliability feature before it is a convenience one.
+        -->
+        <receiver
+            android:name=".widget.SonoRitmoWidgetReceiver"
+            android:exported="false"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/sonoritmo_widget_info" />
+        </receiver>
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <!-- WorkManager is configured by the Application via Configuration.Provider. -->
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+    </application>
+</manifest>

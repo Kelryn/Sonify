@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Per-app language support (API 33+). Without this the user cannot pick the app's language
+  from system settings, which matters for a bilingual app.
+-->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <locale android:name="es" />
+</locale-config>

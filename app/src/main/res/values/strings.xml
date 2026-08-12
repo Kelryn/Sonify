@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SonoRitmo</string>
+    <string name="nav_profiles">Profiles</string>
+    <string name="nav_history">Activity</string>
+    <string name="nav_settings">Settings</string>
+
+    <string name="tile_label">SonoRitmo</string>
+    <string name="tile_idle">No profile</string>
+    <string name="tile_idle_description">No sound profile is active. Tap to pause all rules.</string>
+    <string name="tile_paused">Paused</string>
+    <string name="tile_paused_description">All rules are paused. Tap to resume them.</string>
+    <string name="tile_active_description">%1$s is active. Tap to pause all rules.</string>
+
+    <string name="widget_idle">No profile</string>
+    <string name="widget_idle_subtitle">Waiting for the next schedule</string>
+    <string name="widget_paused">Paused</string>
+    <string name="widget_paused_subtitle">Rules are suspended</string>
+    <string name="widget_active_subtitle">Active now</string>
+    <string name="widget_description">Shows the active sound profile</string>
+
+    <string name="fgs_special_use_subtype">Applies the user\'s scheduled sound profile and volume ramp, then stops.</string>
+
+</resources>
