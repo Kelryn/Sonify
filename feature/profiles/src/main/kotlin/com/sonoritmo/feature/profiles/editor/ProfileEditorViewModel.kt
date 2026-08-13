@@ -43,6 +43,14 @@ data class ProfileEditorUiState(
     val capabilities: List<StreamCapability> = emptyList(),
     val ringNotificationCoupled: Boolean = false,
     val issues: List<ValidationIssue> = emptyList(),
+    /**
+     * Counts rejected saves so the screen can announce each one.
+     *
+     * [issues] on its own cannot drive a one-shot message: tapping save twice with the same
+     * problems leaves the list equal, no recomposition key changes, and the second tap looks
+     * exactly like nothing happening — which is the failure this field exists to prevent.
+     */
+    val rejectedSaves: Int = 0,
     val saved: Boolean = false,
 )
 
@@ -165,16 +173,20 @@ class ProfileEditorViewModel @Inject constructor(
         val profile = draft.copy(updatedAt = timeSource.now()).normalized()
         val issues = profile.validate() + _uiState.value.schedules.flatMap { it.validate() }
         if (issues.isNotEmpty()) {
-            _uiState.update { it.copy(issues = issues.distinct()) }
+            _uiState.update { it.copy(issues = issues.distinct(), rejectedSaves = it.rejectedSaves + 1) }
             return@launch
         }
-        when (profileRepository.save(profile)) {
+        when (val result = profileRepository.save(profile)) {
             is SaveResult.Saved -> {
                 scheduleRepository.replaceForProfile(profile.uuid, _uiState.value.schedules)
                 coordinator.reconcile(Trigger.CONFIG_CHANGED)
                 _uiState.update { it.copy(saved = true, issues = emptyList()) }
             }
-            is SaveResult.Invalid -> _uiState.update { it.copy(issues = profile.validate()) }
+            // The repository normalises again on its side, so its verdict is the one that
+            // counts; re-running validate() here could disagree with what was written.
+            is SaveResult.Invalid -> _uiState.update {
+                it.copy(issues = result.issues, rejectedSaves = it.rejectedSaves + 1)
+            }
         }
     }
 

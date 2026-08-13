@@ -15,13 +15,19 @@ sostienen el diseño.
 | | |
 |---|---|
 | Código | 113 archivos Kotlin, ~14.800 líneas, 7 módulos Gradle |
-| Compilado alguna vez | **No.** El primer `assembleDebug` real es el de CI |
+| Compilado | **Sí**, desde 2026-08-13. CI verde: `assembleDebug`, `assembleRelease`, lint y tests |
+| Instalado en un dispositivo | Sí, v1.1.0 |
 | Verificado de verdad | `:core:domain` — 107 aserciones ejecutadas, 0 fallos |
-| Auditoría de QA | 11 defectos encontrados y corregidos antes del push |
 
-**Tu primera tarea es poner el CI en verde.** Es razonable esperar errores de tipos en las
-fronteras entre módulos; la auditoría estática ya encontró cuatro y no hay motivo para creer
-que no quede alguno. Lo que *no* deberían aparecer son problemas de arquitectura.
+**No hay SDK de Android ni JDK en la máquina de desarrollo.** `./gradlew` no se puede
+ejecutar en local; se compila empujando una rama y lanzando el workflow con
+`gh workflow run ci.yml --ref <rama>`. Cada vuelta cuesta entre 4 y 9 minutos.
+
+Lo que encontró el primer uso real, y que conviene tener presente al tocar UI: la capa de
+presentación tenía estado **calculado y nunca pintado**. El editor de perfiles rechazaba
+guardar y no decía por qué, y como un perfil nuevo incumple `PROFILE_CHANGES_NOTHING` por
+construcción, crear un perfil era literalmente imposible. Si añades un estado de error a un
+ViewModel, comprueba que alguna pantalla lo consume.
 
 ```bash
 ./gradlew assembleDebug          # el que importa

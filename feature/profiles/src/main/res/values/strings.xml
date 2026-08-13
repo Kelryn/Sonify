@@ -55,6 +55,27 @@
     <string name="msg_pause_started">Rules paused</string>
     <string name="msg_pause_cleared">Rules resumed</string>
     <string name="msg_save_failed">Could not save</string>
+    <string name="msg_created">%1$s created</string>
+
+    <!--
+      One line per ValidationIssue. The editor refuses to save while any of these hold, so
+      every one of them needs a sentence that says what to do about it: a save button that
+      does nothing and explains nothing is indistinguishable from a broken app.
+    -->
+    <string name="issue_title">Cannot save yet</string>
+    <string name="issue_name_blank">Give the profile a name.</string>
+    <string name="issue_name_too_long">The name is too long.</string>
+    <string name="issue_uuid_blank">This profile lost its internal identifier. Close the editor and start again.</string>
+    <string name="issue_priority_out_of_range">Priority has to be between 0 and 100.</string>
+    <string name="issue_emoji_too_long">Use a single emoji.</string>
+    <string name="issue_transition_out_of_range">The fade length is out of range.</string>
+    <string name="issue_volume_out_of_range">One of the volumes is out of range.</string>
+    <string name="issue_ringer_contradicts_volume">The ringer is set to normal but the ring volume is zero. Raise the volume or pick silent.</string>
+    <string name="issue_profile_changes_nothing">This profile would not change anything. Set at least one volume, a ringer mode or Do Not Disturb.</string>
+    <string name="issue_schedule_no_days">Every schedule needs at least one day.</string>
+    <string name="issue_schedule_start_out_of_range">A schedule starts at an impossible time.</string>
+    <string name="issue_schedule_duration_out_of_range">A schedule has an impossible length.</string>
+    <string name="issue_schedule_orphaned">A schedule is not attached to this profile.</string>
 
     <string name="template_night">Night</string>
     <string name="template_work">Work</string>

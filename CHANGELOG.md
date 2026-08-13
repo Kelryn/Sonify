@@ -2,6 +2,33 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.1.0] — 2026-08-13
+
+Primera versión instalada en un dispositivo real. La 1.0.0 nunca llegó a ejecutarse: la
+verificación de esa versión fue estática, y esto es lo que apareció al usarla.
+
+### Corregido
+
+- **No se podía crear ningún perfil.** El editor rechaza los perfiles inválidos y calculaba
+  la lista de problemas, pero la pantalla no la pintaba en ninguna parte. Un perfil recién
+  creado incumple `PROFILE_CHANGES_NOTHING` por construcción, así que el primer guardado
+  siempre fallaba y no ocurría nada visible. Ahora cada motivo se muestra con su explicación
+  y se anuncia además por snackbar.
+- **Las plantillas eran inalcanzables** en cuanto existía un perfil: el selector colgaba solo
+  del estado vacío. Pasa a la barra superior, donde siempre está disponible.
+- **Las plantillas se guardaban con el nombre del enum** (`NIGHT`, `WORK`) en lugar de su
+  etiqueta traducida.
+- Crear un perfil desde una plantilla no daba ninguna confirmación.
+- Los botones de las hojas inferiores usaban `fillMaxSize`, con lo que cada uno reclamaba
+  toda la altura disponible.
+- La publicación del APK como *release* público en GitHub pasa a ser opcional en las
+  ejecuciones manuales del workflow.
+
+### Cambiado
+
+- El APK que produce el workflow por defecto es el de *release*: el de depuración lo marca
+  Play Protect como aplicación peligrosa y no se puede instalar sin pelearse con el sistema.
+
 ## [1.0.0] — 2026-08-12
 
 Primera versión pública.

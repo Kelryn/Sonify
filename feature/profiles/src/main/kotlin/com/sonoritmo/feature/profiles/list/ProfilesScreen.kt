@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.PauseCircle
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.DropdownMenu
@@ -77,6 +78,12 @@ fun ProfilesScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.profiles_title)) },
                 actions = {
+                    // The template sheet used to hang off the empty state alone, so it
+                    // became unreachable the moment the first profile existed. It is the
+                    // fastest way to create a profile, so it belongs somewhere permanent.
+                    IconButton(onClick = { templateSheetOpen = true }) {
+                        Icon(Icons.Filled.AutoAwesome, stringResource(R.string.profiles_from_template))
+                    }
                     IconButton(onClick = { viewModel.onEvent(ProfilesEvent.PauseAll(PAUSE_DEFAULT_MINUTES)) }) {
                         Icon(Icons.Filled.PauseCircle, stringResource(R.string.pause_all))
                     }
@@ -140,14 +147,15 @@ fun ProfilesScreen(
         ModalBottomSheet(onDismissRequest = { templateSheetOpen = false }) {
             Column(modifier = Modifier.padding(bottom = 32.dp)) {
                 ProfileTemplate.entries.forEach { template ->
+                    val label = templateLabel(template)
                     TextButton(
                         onClick = {
-                            viewModel.onEvent(ProfilesEvent.CreateFromTemplate(template))
+                            viewModel.onEvent(ProfilesEvent.CreateFromTemplate(template, label))
                             templateSheetOpen = false
                         },
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text(templateLabel(template))
+                        Text(label)
                     }
                 }
             }
@@ -164,7 +172,9 @@ fun ProfilesScreen(
                             viewModel.onEvent(ProfilesEvent.ActivateFor(durationTarget, minutes))
                             durationSheetFor = null
                         },
-                        modifier = Modifier.fillMaxSize(),
+                        // fillMaxWidth, not fillMaxSize: inside a Column every child asking
+                        // for the full height fights the others for it.
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(stringResource(labelRes))
                     }
@@ -346,6 +356,7 @@ private fun userMessageText(message: UserMessage): String = when (message.kind) 
     UserMessage.Kind.PROFILE_DEACTIVATED -> stringResource(R.string.msg_deactivated)
     UserMessage.Kind.PROFILE_DELETED -> stringResource(R.string.msg_deleted, message.argument.orEmpty())
     UserMessage.Kind.PROFILE_DUPLICATED -> stringResource(R.string.msg_duplicated, message.argument.orEmpty())
+    UserMessage.Kind.PROFILE_CREATED -> stringResource(R.string.msg_created, message.argument.orEmpty())
     UserMessage.Kind.PAUSE_STARTED -> stringResource(R.string.msg_pause_started)
     UserMessage.Kind.PAUSE_CLEARED -> stringResource(R.string.msg_pause_cleared)
     UserMessage.Kind.SAVE_FAILED -> stringResource(R.string.msg_save_failed)

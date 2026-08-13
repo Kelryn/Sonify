@@ -13,11 +13,14 @@ on:
   workflow_dispatch:
     inputs:
       variant:
-        description: 'debug (installable straight away) or release (minified)'
+        # release by default: the debug build is marked debuggable, which Play Protect
+        # treats as a harmful app and refuses to install without a fight. The release build
+        # is minified and not debuggable, so it installs like any other sideloaded app.
+        description: 'release (installable, minified) or debug (debuggable, Play Protect blocks it)'
         required: false
-        default: 'debug'
+        default: 'release'
         type: choice
-        options: [debug, release]
+        options: [release, debug]
       publish:
         description: 'Also attach the APK to a public GitHub Release'
         required: false
@@ -46,7 +49,7 @@ jobs:
         id: assemble
         run: |
           chmod +x ./gradlew
-          variant='${{ github.event.inputs.variant || 'debug' }}'
+          variant='${{ github.event.inputs.variant || 'release' }}'
           if [ "$variant" = "release" ]; then
             ./gradlew assembleRelease --stacktrace
             apk=$(find app/build/outputs/apk/release -name '*.apk' | head -1)

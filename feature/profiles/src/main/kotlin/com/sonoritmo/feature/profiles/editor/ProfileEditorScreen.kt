@@ -13,6 +13,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -21,15 +23,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -37,6 +45,7 @@ import com.sonoritmo.core.domain.model.DndMode
 import com.sonoritmo.core.domain.model.ProfileOptions
 import com.sonoritmo.core.domain.model.RingerMode
 import com.sonoritmo.core.domain.model.SoundProfile
+import com.sonoritmo.core.domain.model.ValidationIssue
 import com.sonoritmo.core.ui.component.DayPicker
 import com.sonoritmo.core.ui.component.SectionHeader
 import com.sonoritmo.core.ui.component.VolumeSliderRow
@@ -51,13 +60,23 @@ fun ProfileEditorScreen(
     viewModel: ProfileEditorViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(state.saved) {
         if (state.saved) onDone()
     }
 
+    // Keyed on the rejection count, not on the issue list: the same problems twice in a row
+    // still deserve a second answer. The card below says what is wrong; this is what tells
+    // someone who tapped the save action in the top bar that anything happened at all.
+    val issueTitle = stringResource(R.string.issue_title)
+    LaunchedEffect(state.rejectedSaves) {
+        if (state.rejectedSaves > 0) snackbarHostState.showSnackbar(issueTitle)
+    }
+
     Scaffold(
         modifier = modifier,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -104,6 +123,8 @@ fun ProfileEditorScreen(
             SchedulesSection(state, viewModel)
             OptionsSection(profile, viewModel)
 
+            IssuesCard(state.issues)
+
             Button(
                 onClick = { viewModel.onSave() },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
@@ -113,6 +134,65 @@ fun ProfileEditorScreen(
         }
     }
 }
+
+/**
+ * What is blocking the save, in words.
+ *
+ * The editor has always refused to write an invalid profile; until this card existed it
+ * refused in complete silence. That was not a cosmetic gap: a profile that has only been
+ * given a name trips `PROFILE_CHANGES_NOTHING` by construction, so the first save of every
+ * new profile failed, and creating one at all was impossible without guessing why.
+ */
+@Composable
+private fun IssuesCard(issues: List<ValidationIssue>) {
+    if (issues.isEmpty()) return
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp)
+            // Assertive rather than polite: the user has just pressed a button that did
+            // nothing visible, and TalkBack should say why without waiting its turn.
+            .semantics { liveRegion = LiveRegionMode.Assertive },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+        ),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(R.string.issue_title),
+                style = MaterialTheme.typography.titleSmall,
+            )
+            issues.forEach { issue ->
+                Text(
+                    text = issueText(issue),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun issueText(issue: ValidationIssue): String = stringResource(
+    when (issue) {
+        ValidationIssue.NAME_BLANK -> R.string.issue_name_blank
+        ValidationIssue.NAME_TOO_LONG -> R.string.issue_name_too_long
+        ValidationIssue.UUID_BLANK -> R.string.issue_uuid_blank
+        ValidationIssue.PRIORITY_OUT_OF_RANGE -> R.string.issue_priority_out_of_range
+        ValidationIssue.EMOJI_TOO_LONG -> R.string.issue_emoji_too_long
+        ValidationIssue.TRANSITION_OUT_OF_RANGE -> R.string.issue_transition_out_of_range
+        ValidationIssue.VOLUME_OUT_OF_RANGE -> R.string.issue_volume_out_of_range
+        ValidationIssue.RINGER_CONTRADICTS_VOLUME -> R.string.issue_ringer_contradicts_volume
+        ValidationIssue.PROFILE_CHANGES_NOTHING -> R.string.issue_profile_changes_nothing
+        ValidationIssue.SCHEDULE_NO_DAYS -> R.string.issue_schedule_no_days
+        ValidationIssue.SCHEDULE_START_OUT_OF_RANGE -> R.string.issue_schedule_start_out_of_range
+        ValidationIssue.SCHEDULE_DURATION_OUT_OF_RANGE -> R.string.issue_schedule_duration_out_of_range
+        ValidationIssue.SCHEDULE_ORPHANED -> R.string.issue_schedule_orphaned
+    },
+)
 
 @Composable
 private fun VolumesSection(

@@ -55,6 +55,22 @@
     <string name="msg_pause_started">Reglas en pausa</string>
     <string name="msg_pause_cleared">Reglas reanudadas</string>
     <string name="msg_save_failed">No se ha podido guardar</string>
+    <string name="msg_created">%1$s creado</string>
+
+    <string name="issue_title">Todavía no se puede guardar</string>
+    <string name="issue_name_blank">Ponle un nombre al perfil.</string>
+    <string name="issue_name_too_long">El nombre es demasiado largo.</string>
+    <string name="issue_uuid_blank">Este perfil ha perdido su identificador interno. Cierra el editor y empieza de nuevo.</string>
+    <string name="issue_priority_out_of_range">La prioridad tiene que estar entre 0 y 100.</string>
+    <string name="issue_emoji_too_long">Usa un solo emoji.</string>
+    <string name="issue_transition_out_of_range">La duración de la transición está fuera de rango.</string>
+    <string name="issue_volume_out_of_range">Uno de los volúmenes está fuera de rango.</string>
+    <string name="issue_ringer_contradicts_volume">El timbre está en normal pero el volumen de tono es cero. Sube el volumen o elige silencio.</string>
+    <string name="issue_profile_changes_nothing">Este perfil no cambiaría nada. Ajusta al menos un volumen, un modo de timbre o No molestar.</string>
+    <string name="issue_schedule_no_days">Cada horario necesita al menos un día.</string>
+    <string name="issue_schedule_start_out_of_range">Un horario empieza a una hora imposible.</string>
+    <string name="issue_schedule_duration_out_of_range">Un horario tiene una duración imposible.</string>
+    <string name="issue_schedule_orphaned">Un horario no está asociado a este perfil.</string>
 
     <string name="template_night">Noche</string>
     <string name="template_work">Trabajo</string>

@@ -58,6 +58,7 @@ data class UserMessage(val kind: Kind, val argument: String? = null) {
         PROFILE_DEACTIVATED,
         PROFILE_DELETED,
         PROFILE_DUPLICATED,
+        PROFILE_CREATED,
         PAUSE_STARTED,
         PAUSE_CLEARED,
         SAVE_FAILED,
@@ -71,7 +72,12 @@ sealed interface ProfilesEvent {
     data class ToggleEnabled(val uuid: String, val enabled: Boolean) : ProfilesEvent
     data class Duplicate(val uuid: String) : ProfilesEvent
     data class Delete(val uuid: String) : ProfilesEvent
-    data class CreateFromTemplate(val template: ProfileTemplate) : ProfilesEvent
+    /**
+     * Carries the name because [ProfileTemplate] has none. Resolving it here, in the layer
+     * that owns the resources, is what keeps the six template labels translatable —
+     * `template.name` would put the enum constant on screen in every language.
+     */
+    data class CreateFromTemplate(val template: ProfileTemplate, val name: String) : ProfilesEvent
     data class PauseAll(val minutes: Int?) : ProfilesEvent
     data object ResumeAll : ProfilesEvent
     data object DismissMessage : ProfilesEvent

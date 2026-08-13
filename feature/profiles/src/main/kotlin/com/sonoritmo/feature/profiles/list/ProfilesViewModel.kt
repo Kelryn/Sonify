@@ -121,7 +121,7 @@ class ProfilesViewModel @Inject constructor(
                 reconcile(Trigger.CONFIG_CHANGED)
                 messages.value = UserMessage(UserMessage.Kind.PROFILE_DELETED, profile?.name)
             }
-            is ProfilesEvent.CreateFromTemplate -> createFromTemplate(event.template)
+            is ProfilesEvent.CreateFromTemplate -> createFromTemplate(event.template, event.name)
             is ProfilesEvent.PauseAll -> viewModelScope.launch {
                 val until = event.minutes?.let { timeSource.now().plus(Duration.ofMinutes(it.toLong())) }
                 automationRepository.setGlobalPause(until ?: FAR_FUTURE_PAUSE(timeSource.now()))
@@ -147,12 +147,15 @@ class ProfilesViewModel @Inject constructor(
         messages.value = UserMessage(UserMessage.Kind.PROFILE_ACTIVATED, profile?.name)
     }
 
-    private fun createFromTemplate(template: ProfileTemplate) = viewModelScope.launch {
-        val result = Templates.build(template, template.name, timeSource, uuidGenerator)
+    private fun createFromTemplate(template: ProfileTemplate, name: String) = viewModelScope.launch {
+        val result = Templates.build(template, name, timeSource, uuidGenerator)
         when (profileRepository.save(result.profile)) {
             is SaveResult.Saved -> {
                 result.schedules.forEach { scheduleRepository.save(it) }
                 reconcile(Trigger.CONFIG_CHANGED)
+                // Without this the sheet closed and the list took a moment to update, which
+                // reads as "the button did nothing" — the same complaint as the editor.
+                messages.value = UserMessage(UserMessage.Kind.PROFILE_CREATED, name)
             }
             is SaveResult.Invalid -> messages.value = UserMessage(UserMessage.Kind.SAVE_FAILED)
         }
