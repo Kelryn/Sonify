@@ -47,6 +47,12 @@ class VolumeControllerImpl @Inject constructor(
     private val capabilities: AudioCapabilities,
 ) : VolumeController {
 
+    // setStreamVolume's flags parameter is a flag IntDef, and lint reads it as "one or more
+    // of", with no way to express the absence of every flag. Zero is the deliberate value
+    // here and the reason is written on AndroidStreams.NO_FLAGS: FLAG_SHOW_UI would throw
+    // the volume panel over whatever the user is doing, and FLAG_PLAY_SOUND would make a
+    // silencing app beep.
+    @Suppress("WrongConstant")
     override fun setIndex(stream: AudioStream, index: Int): AudioOpResult {
         if (!stream.writable) return AudioOpResult.Refused(RefusalReason.STREAM_NOT_WRITABLE)
         if (capabilities.isVolumeFixed()) {
