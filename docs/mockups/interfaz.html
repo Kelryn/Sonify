@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SonoRitmo — muestras de interfaz</title>
+<style>
+:root{
+  --primary:#3F5F91; --on-primary:#FFFFFF; --primary-container:#D7E3FF; --on-primary-container:#001B3D;
+  --secondary-container:#DAE2F9; --on-secondary-container:#141B2C;
+  --surface:#FAF9FD; --on-surface:#1A1B20; --surface-variant:#E0E2EC; --on-surface-variant:#44464F;
+  --outline:#74777F; --error:#BA1A1A;
+  --active:#1F6E43; --active-container:#B8F0CD; --on-active-container:#002110;
+  --paused:#7A5800; --paused-container:#FFDEA6; --on-paused-container:#271900;
+  --degraded:#A4322A; --degraded-container:#FFDAD5; --on-degraded-container:#410100;
+  --page-bg:#EEF0F6; --page-fg:#1A1B20; --page-muted:#5A5D68; --frame:#C9CCD6;
+}
+body.dark{
+  --primary:#A8C8FF; --on-primary:#06305F; --primary-container:#264777; --on-primary-container:#D7E3FF;
+  --secondary-container:#3E4759; --on-secondary-container:#DAE2F9;
+  --surface:#121318; --on-surface:#E3E2E8; --surface-variant:#44464F; --on-surface-variant:#C4C6D0;
+  --outline:#8E9099; --error:#FFB4AB;
+  --active:#7ED9A5; --active-container:#00522C; --on-active-container:#B8F0CD;
+  --paused:#F2BE48; --paused-container:#5C4200; --on-paused-container:#FFDEA6;
+  --degraded:#FFB4A8; --degraded-container:#841F16; --on-degraded-container:#FFDAD5;
+  --page-bg:#0C0D11; --page-fg:#E3E2E8; --page-muted:#9A9DA8; --frame:#2A2C33;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:var(--page-bg); color:var(--page-fg);
+  padding:32px 20px 64px; transition:background .25s,color .25s;
+}
+header{max-width:1180px;margin:0 auto 28px}
+h1{font-size:28px;font-weight:650;letter-spacing:-.01em}
+.sub{color:var(--page-muted);margin-top:8px;max-width:60ch;line-height:1.55;font-size:15px}
+.controls{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button.toggle{
+  font:inherit;font-size:14px;font-weight:550;padding:9px 16px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--frame);background:transparent;color:var(--page-fg);transition:.15s;
+}
+button.toggle:hover{background:var(--frame)}
+button.toggle[aria-pressed="true"]{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.note{font-size:13px;color:var(--page-muted)}
+
+.grid{max-width:1180px;margin:0 auto;display:grid;gap:36px 28px;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+figure{margin:0}
+figcaption{margin-top:12px}
+figcaption b{display:block;font-size:15px;font-weight:600}
+figcaption span{display:block;font-size:13px;color:var(--page-muted);margin-top:3px;line-height:1.5}
+
+/* ── device frame ─────────────────────────────────────────────── */
+.phone{
+  width:100%;max-width:320px;height:660px;border-radius:34px;padding:9px;
+  background:var(--frame);box-shadow:0 12px 36px rgba(0,0,0,.16);
+}
+body.dark .phone{box-shadow:0 12px 36px rgba(0,0,0,.5)}
+.screen{
+  height:100%;border-radius:26px;overflow:hidden;background:var(--surface);color:var(--on-surface);
+  display:flex;flex-direction:column;position:relative;
+}
+.statusbar{display:flex;justify-content:space-between;align-items:center;
+  padding:9px 18px 3px;font-size:11px;font-weight:600;opacity:.75;flex-shrink:0}
+.appbar{padding:6px 14px 12px;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.appbar h2{font-size:21px;font-weight:600;flex:1}
+.appbar .act{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+  font-size:17px;opacity:.8}
+.body{flex:1;overflow:hidden;padding:0 14px;display:flex;flex-direction:column;gap:9px}
+.navbar{display:flex;flex-shrink:0;border-top:1px solid color-mix(in srgb,var(--outline) 28%,transparent);
+  background:var(--surface);padding:5px 0 9px}
+.navitem{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;
+  color:var(--on-surface-variant);padding:4px 0}
+.navitem .ic{width:56px;height:30px;border-radius:999px;display:grid;place-items:center;font-size:16px}
+.navitem.on{color:var(--on-secondary-container);font-weight:600}
+.navitem.on .ic{background:var(--secondary-container)}
+.fab{position:absolute;right:16px;bottom:78px;background:var(--primary-container);
+  color:var(--on-primary-container);border-radius:16px;padding:14px 18px;font-size:13.5px;
+  font-weight:600;display:flex;gap:7px;align-items:center;box-shadow:0 5px 14px rgba(0,0,0,.2)}
+
+/* ── banner ───────────────────────────────────────────────────── */
+.banner{border-radius:20px;padding:14px;display:flex;gap:11px;align-items:center}
+.banner .ic{font-size:22px;line-height:1}
+.banner .txt{flex:1;min-width:0}
+.banner .t{font-size:17px;font-weight:600;line-height:1.25}
+.banner .r{font-size:13px;margin-top:2px;opacity:.92}
+.banner .n{font-size:11.5px;margin-top:3px;opacity:.78;font-weight:500}
+.banner .btn{font-size:13px;font-weight:600;padding:7px 11px;border-radius:999px;
+  background:color-mix(in srgb,currentColor 12%,transparent)}
+.b-active{background:var(--active-container);color:var(--on-active-container)}
+.b-idle{background:var(--surface-variant);color:var(--on-surface-variant)}
+.b-paused{background:var(--paused-container);color:var(--on-paused-container)}
+.b-degraded{background:var(--degraded-container);color:var(--on-degraded-container)}
+
+/* ── profile card ─────────────────────────────────────────────── */
+.card{border-radius:16px;padding:11px;display:flex;gap:11px;align-items:center;
+  background:var(--surface);border:1px solid color-mix(in srgb,var(--outline) 22%,transparent)}
+.card.on{background:var(--secondary-container);color:var(--on-secondary-container);border-color:transparent}
+.card.off{opacity:.5}
+.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:19px;flex-shrink:0}
+.card .info{flex:1;min-width:0}
+.card .nm{font-size:15px;font-weight:600}
+.card .sm{font-size:12.5px;color:var(--on-surface-variant);margin-top:1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card.on .sm{color:var(--on-secondary-container);opacity:.85}
+.card .sc{font-size:11px;color:var(--on-surface-variant);margin-top:2px;opacity:.9}
+.card.on .sc{color:var(--on-secondary-container);opacity:.8}
+.card .acts{display:flex;gap:1px;opacity:.62;font-size:15px}
+
+/* ── editor ───────────────────────────────────────────────────── */
+.scroll{overflow-y:auto;flex:1;padding-bottom:12px}
+.scroll::-webkit-scrollbar{width:0}
+.field{border:1px solid var(--outline);border-radius:5px;padding:9px 12px;position:relative;margin-bottom:4px}
+.field label{position:absolute;top:-8px;left:9px;background:var(--surface);padding:0 5px;
+  font-size:11px;color:var(--primary)}
+.field .v{font-size:15px}
+.section{font-size:12.5px;font-weight:600;color:var(--primary);margin:15px 0 5px;letter-spacing:.02em}
+.slider-row{padding:5px 0}
+.slider-head{display:flex;align-items:center;gap:10px}
+.slider-head .ic{font-size:16px;width:20px;text-align:center;opacity:.85}
+.slider-head .lb{flex:1;font-size:14.5px;font-weight:500}
+.slider-head .hint{font-size:10.5px;color:var(--on-surface-variant);font-weight:400;margin-top:1px}
+.sw{width:40px;height:23px;border-radius:999px;position:relative;flex-shrink:0;
+  background:var(--surface-variant);border:2px solid var(--outline)}
+.sw i{position:absolute;width:13px;height:13px;border-radius:50%;background:var(--outline);
+  top:3px;left:3px;transition:.2s}
+.sw.on{background:var(--primary);border-color:var(--primary)}
+.sw.on i{background:var(--on-primary);left:20px;width:17px;height:17px;top:1px}
+.sw.dis{opacity:.35}
+.track{height:4px;border-radius:2px;background:var(--surface-variant);margin:9px 0 2px;position:relative}
+.track .fill{position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:var(--primary)}
+.track .knob{position:absolute;top:-6px;width:16px;height:16px;border-radius:50%;
+  background:var(--primary);transform:translateX(-8px)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.chip{font-size:12.5px;padding:6px 12px;border-radius:8px;border:1px solid var(--outline);
+  color:var(--on-surface-variant)}
+.chip.on{background:var(--secondary-container);color:var(--on-secondary-container);border-color:transparent;font-weight:600}
+.days{display:flex;justify-content:space-between;margin-top:8px}
+.day{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:13px;
+  font-weight:600;background:var(--surface-variant);color:var(--on-surface-variant)}
+.day.on{background:var(--primary-container);color:var(--on-primary-container)}
+.microcopy{font-size:11px;color:var(--on-surface-variant);line-height:1.45;margin-top:7px}
+.toggle-row{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:14px}
+.toggle-row span{flex:1}
+.btn-fill{background:var(--primary);color:var(--on-primary);border-radius:999px;
+  padding:12px;text-align:center;font-size:14.5px;font-weight:600;margin-top:14px}
+.btn-out{border:1px solid var(--outline);border-radius:999px;padding:11px;text-align:center;
+  font-size:14px;font-weight:500;margin-top:8px}
+
+/* ── history / diagnostics ────────────────────────────────────── */
+.log{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid color-mix(in srgb,var(--outline) 15%,transparent)}
+.log .ic{font-size:16px;flex-shrink:0;margin-top:1px}
+.log .t{font-size:14.5px;font-weight:550}
+.log .p{font-size:12.5px;margin-top:1px}
+.log .d{font-size:11px;color:var(--on-surface-variant);margin-top:2px}
+.ok{color:var(--active)} .bad{color:var(--degraded)}
+.check{display:flex;gap:11px;align-items:center;padding:9px 0}
+.check .info{flex:1}
+.check .t{font-size:14.5px;font-weight:550}
+.check .w{font-size:11.5px;color:var(--on-surface-variant);margin-top:2px;line-height:1.4}
+.check .cta{font-size:13px;font-weight:600;color:var(--primary)}
+.hr{height:1px;background:color-mix(in srgb,var(--outline) 20%,transparent);margin:12px 0}
+.stat{font-size:13px;padding:3px 0}
+.radio{display:flex;align-items:center;gap:11px;padding:9px 0;font-size:14px}
+.rd{width:19px;height:19px;border-radius:50%;border:2px solid var(--outline);flex-shrink:0;position:relative}
+.rd.on{border-color:var(--primary)}
+.rd.on::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--primary)}
+
+/* ── system surfaces ──────────────────────────────────────────── */
+.surfaces{max-width:1180px;margin:44px auto 0}
+.surfaces h3{font-size:19px;font-weight:620;margin-bottom:6px}
+.surfaces .sub2{color:var(--page-muted);font-size:14px;margin-bottom:20px;line-height:1.55;max-width:70ch}
+.srow{display:flex;gap:28px;flex-wrap:wrap}
+.shade{width:300px;border-radius:24px;padding:16px;background:var(--surface);color:var(--on-surface);
+  box-shadow:0 8px 26px rgba(0,0,0,.14)}
+body.dark .shade{box-shadow:0 8px 26px rgba(0,0,0,.45)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{border-radius:18px;padding:13px;display:flex;gap:10px;align-items:center;
+  background:var(--surface-variant);color:var(--on-surface-variant)}
+.tile.on{background:var(--primary-container);color:var(--on-primary-container)}
+.tile .tn{font-size:12.5px;font-weight:600;line-height:1.2}
+.tile .ts{font-size:10.5px;opacity:.8}
+.widget{width:230px;border-radius:22px;padding:15px;background:var(--surface);color:var(--on-surface);
+  box-shadow:0 8px 26px rgba(0,0,0,.14)}
+body.dark .widget{box-shadow:0 8px 26px rgba(0,0,0,.45)}
+.widget .wt{font-size:16px;font-weight:600}
+.widget .ws{font-size:12px;color:var(--on-surface-variant);margin-top:3px}
+footer{max-width:1180px;margin:48px auto 0;font-size:13px;color:var(--page-muted);line-height:1.65}
+footer code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
+  background:color-mix(in srgb,var(--frame) 60%,transparent);padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>SonoRitmo — muestras de interfaz</h1>
+  <p class="sub">Reconstrucción fiel de las pantallas a partir del código: los colores salen de
+  <code>Theme.kt</code>, los textos de los <code>strings.xml</code> en español, y la disposición de cada
+  composable. No son capturas de la app en ejecución — es lo que el código describe.</p>
+  <div class="controls">
+    <button class="toggle" id="btn-light" aria-pressed="true">Tema claro</button>
+    <button class="toggle" id="btn-dark" aria-pressed="false">Tema oscuro</button>
+    <span class="note">El color dinámico de Android 12+ sustituiría estos acentos por los del fondo de pantalla.</span>
+  </div>
+</header>
+
+<div class="grid">
+
+  <!-- 1 · PERFILES, con perfil activo -->
+  <figure>
+    <div class="phone"><div class="screen">
+      <div class="statusbar"><span>23:14</span><span>▾ ▮ 84%</span></div>
+      <div class="appbar"><h2>Perfiles</h2><div class="act">⏸</div><div class="act">⚙</div></div>
+      <div class="body">
+        <div class="banner b-active">
+          <div class="ic">✓</div>
+          <div class="txt">
+            <div class="t">Noche está activo</div>
+            <div class="r">Todos los días · 23:00 – 07:00 (día siguiente)</div>
+            <div class="n">Termina a las 7:00</div>
+          </div>
+        </div>
+        <div class="card on">
+          <div class="avatar" style="background:rgba(59,74,107,.20)">🌙</div>
+          <div class="info">
+            <div class="nm">Noche</div>
+            <div class="sm">Silencio · Multimedia al 20 % · Alarma al 100 %</div>
+            <div class="sc">Todos los días · 23:00 – 07:00 (día siguiente)</div>
+          </div>
+          <div class="acts">✏️ ⋮</div>
+        </div>
+        <div class="card">
+          <div class="avatar" style="background:rgba(74,111,165,.20)">💼</div>
+          <div class="info">
+            <div class="nm">Trabajo</div>
+            <div class="sm">Vibración · Tono de llamada al 0 %</div>
+            <div class="sc">De lunes a viernes · 9:00 – 18:00</div>
+          </div>
+          <div class="acts">✏️ ⋮</div>
+        </div>
+        <div class="card">
+          <div class="avatar" style="background:rgba(122,92,158,.20)">🤝</div>
+          <div class="info">
+            <div class="nm">Reunión</div>
+            <div class="sm">Vibración · Multimedia al 0 %</div>
+            <div class="sc">Solo manual</div>
+          </div>
+          <div class="acts">✏️ ⋮</div>
+        </div>
+        <div class="card off">
+          <div class="avatar" style="background:rgba(46,52,64,.18)">🎬</div>
+          <div class="info">
+            <div class="nm">Cine</div>
+            <div class="sm">Silencio · Multimedia al 0 %</div>
+            <div class="sc">Solo manual</div>
+          </div>
+          <div class="acts">✏️ ⋮</div>
+        </div>
+      </div>
+      <div class="fab">＋ Nuevo perfil</div>
+      <div class="navbar">
+        <div class="navitem on"><div class="ic">🎚</div>Perfiles</div>
+        <div class="navitem"><div class="ic">🕘</div>Actividad</div>
+        <div class="navitem"><div class="ic">⚙</div>Ajustes</div>
+      </div>
+    </div></div>
+    <figcaption><b>Perfiles — algo activo</b><span>El banner responde a las tres preguntas que ninguna app
+    de la categoría responde: qué suena, por qué y qué viene después. Tocar una tarjeta la activa; editar
+    está detrás del lápiz.</span></figcaption>
+  </figure>
+
+  <!-- 2 · PERFILES, estados alternativos -->
+  <figure>
+    <div class="phone"><div class="screen">
+      <div class="statusbar"><span>14:02</span><span>▾ ▮ 61%</span></div>
+      <div class="appbar"><h2>Perfiles</h2><div class="act">⏸</div><div class="act">⚙</div></div>
+      <div class="body">
+        <div class="banner b-degraded">
+          <div class="ic">⚠</div>
+          <div class="txt">
+            <div class="t">Falta un permiso</div>
+            <div class="r">Sin acceso a No molestar la app no puede silenciar el timbre.</div>
+          </div>
+          <div class="btn">Arreglar</div>
+        </div>
+        <div class="banner b-paused" style="margin-top:2px">
+          <div class="ic">⏸</div>
+          <div class="txt">
+            <div class="t">Reglas en pausa</div>
+            <div class="n">Se reanudan a las 15:02</div>
+          </div>
+          <div class="btn">Reanudar</div>
+        </div>
+        <div class="banner b-idle" style="margin-top:2px">
+          <div class="ic">🌙</div>
+          <div class="txt">
+            <div class="t">Nada activo</div>
+            <div class="n">Noche empieza a las 23:00</div>
+          </div>
+        </div>
+        <div class="microcopy" style="margin-top:14px;font-size:11.5px">
+          Los tres estados se muestran juntos solo para esta comparación. En la app aparece uno cada vez,
+          con esta prioridad: permiso ausente › pausa global › activo › en espera.
+        </div>
+        <div class="card" style="margin-top:10px">
+          <div class="avatar" style="background:rgba(46,125,107,.20)">🚗</div>
+          <div class="info">
+            <div class="nm">Conducción</div>
+            <div class="sm">Con sonido · Tono de llamada al 90 %</div>
+            <div class="sc">Solo manual</div>
+          </div>
+          <div class="acts">✏️ ⋮</div>
+        </div>
+        <div class="card">
+          <div class="avatar" style="background:rgba(110,139,61,.20)">🌿</div>
+          <div class="info">
+            <div class="nm">Fin de semana</div>
+            <div class="sm">Con sonido · Multimedia al 70 %</div>
+            <div class="sc">Fin de semana · 9:00 – 23:00</div>
+          </div>
+          <div class="acts">✏️ ⋮</div>
+        </div>
+      </div>
+      <div class="navbar">
+        <div class="navitem on"><div class="ic">🎚</div>Perfiles</div>
+        <div class="navitem"><div class="ic">🕘</div>Actividad</div>
+        <div class="navitem"><div class="ic">⚙</div>Ajustes</div>
+      </div>
+    </div></div>
+    <figcaption><b>Los otros tres estados del banner</b><span>Un permiso ausente se dice en la pantalla
+    principal, no se entierra en ajustes: una app de horarios que no puede programar y calla es
+    exactamente el fallo que este proyecto existe para evitar.</span></figcaption>
+  </figure>
+
+  <!-- 3 · EDITOR -->
+  <figure>
+    <div class="phone"><div class="screen">
+      <div class="statusbar"><span>23:16</span><span>▾ ▮ 84%</span></div>
+      <div class="appbar"><div class="act">←</div><h2 style="font-size:19px">Editar perfil</h2><div class="act">✓</div></div>
+      <div class="body"><div class="scroll">
+        <div class="field"><label>Nombre</label><div class="v">Noche</div></div>
+
+        <div class="section">VOLÚMENES</div>
+        <div class="slider-row">
+          <div class="slider-head"><span class="ic">🔔</span><span class="lb">Tono de llamada</span><span class="sw"><i></i></span></div>
+        </div>
+        <div class="slider-row">
+          <div class="slider-head"><span class="ic">💬</span><span class="lb">Notificaciones</span><span class="sw on"><i></i></span></div>
+          <div class="track"><div class="fill" style="width:0"></div><div class="knob" style="left:0"></div></div>
+        </div>
+        <div class="slider-row">
+          <div class="slider-head"><span class="ic">🎵</span><span class="lb">Multimedia</span><span class="sw on"><i></i></span></div>
+          <div class="track"><div class="fill" style="width:20%"></div><div class="knob" style="left:20%"></div></div>
+        </div>
+        <div class="slider-row">
+          <div class="slider-head"><span class="ic">⏰</span><span class="lb">Alarma</span><span class="sw on"><i></i></span></div>
+          <div class="track"><div class="fill" style="width:100%"></div><div class="knob" style="left:100%"></div></div>
+        </div>
+        <div class="slider-row">
+          <div class="slider-head"><span class="ic">📢</span><span class="lb">Sonidos del sistema</span><span class="sw on"><i></i></span></div>
+          <div class="track"><div class="fill" style="width:0"></div><div class="knob" style="left:0"></div></div>
+        </div>
+        <div class="slider-row">
+          <div class="slider-head"><span class="ic">📞</span><span class="lb">En llamada</span><span class="sw"><i></i></span></div>
+        </div>
+        <div class="slider-row">
+          <div class="slider-head"><span class="ic">♿</span>
+            <span class="lb">Accesibilidad<div class="hint">Android no permite que las apps cambien este</div></span>
+            <span class="sw dis"><i></i></span></div>
+        </div>
+
+        <div class="section">TIMBRE</div>
+        <div class="chips">
+          <span class="chip">Dejarlo como esté</span><span class="chip">Con sonido</span>
+          <span class="chip">Vibración</span><span class="chip on">Silencio</span>
+        </div>
+
+        <div class="section">NO MOLESTAR</div>
+        <div class="chips">
+          <span class="chip">Dejarlo como esté</span><span class="chip">Liberar mi regla</span>
+          <span class="chip on">Solo prioritarias</span><span class="chip">Solo alarmas</span>
+          <span class="chip">Silencio total</span>
+        </div>
+        <div class="microcopy">SonoRitmo puede activar No molestar, pero Android no deja que ninguna app
+        desactive un modo que ha puesto otro.</div>
+
+        <div class="section">HORARIOS</div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 0">
+          <span style="flex:1;font-size:14.5px">23:00 – 7:00 (día siguiente)</span>
+          <span style="font-size:11px;opacity:.75">Dura 8 h</span><span style="opacity:.6">🗑</span>
+        </div>
+        <div class="days">
+          <span class="day on">L</span><span class="day on">M</span><span class="day on">X</span>
+          <span class="day on">J</span><span class="day on">V</span><span class="day on">S</span>
+          <span class="day on">D</span>
+        </div>
+        <div class="btn-out">Añadir un horario</div>
+
+        <div class="section">OPCIONES</div>
+        <div class="toggle-row"><span>Restaurar el sonido anterior al terminar</span><span class="sw on"><i></i></span></div>
+        <div class="toggle-row"><span>No cambiar nada durante una llamada</span><span class="sw on"><i></i></span></div>
+        <div class="toggle-row"><span>No bajar multimedia si hay algo sonando</span><span class="sw on"><i></i></span></div>
+        <div style="font-size:13.5px;margin-top:10px">Transición de 5 s</div>
+        <div class="track"><div class="fill" style="width:33%"></div><div class="knob" style="left:33%"></div></div>
+        <div style="font-size:13.5px;margin-top:12px">Prioridad: 60</div>
+        <div class="microcopy" style="margin-top:2px">Cuando dos horarios se solapan, gana el de mayor prioridad.</div>
+        <div class="track"><div class="fill" style="width:60%"></div><div class="knob" style="left:60%"></div></div>
+        <div class="btn-fill">Guardar</div>
+      </div></div>
+    </div></div>
+    <figcaption><b>Editor de perfil</b><span>Cada stream tiene su interruptor de «no tocar», porque
+    <code>null</code> es un valor de primera clase en el modelo. Accesibilidad aparece deshabilitado
+    <i>con su explicación</i> en vez de desaparecer, que parecería un olvido.</span></figcaption>
+  </figure>
+
+  <!-- 4 · HISTORIAL -->
+  <figure>
+    <div class="phone"><div class="screen">
+      <div class="statusbar"><span>07:03</span><span>▾ ▮ 79%</span></div>
+      <div class="appbar"><h2>Actividad</h2></div>
+      <div class="body">
+        <div class="chips"><span class="chip on">Todo</span><span class="chip">Solo problemas</span></div>
+        <div class="scroll" style="margin-top:6px">
+          <div class="log"><span class="ic ok">✓</span><div>
+            <div class="t">Terminó un horario</div><div class="p">Noche</div>
+            <div class="d">13/8/26, 7:00</div></div></div>
+          <div class="log"><span class="ic ok">✓</span><div>
+            <div class="t">Empezó un horario</div><div class="p">Noche</div>
+            <div class="d">12/8/26, 23:00</div></div></div>
+          <div class="log"><span class="ic bad">⚠</span><div>
+            <div class="t">Android ignoró el cambio</div><div class="p">Trabajo</div>
+            <div class="d">12/8/26, 18:00</div></div></div>
+          <div class="log"><span class="ic ok">✓</span><div>
+            <div class="t">Desviación corregida</div><div class="p">Trabajo</div>
+            <div class="d">12/8/26, 14:31</div></div></div>
+          <div class="log"><span class="ic ok">✓</span><div>
+            <div class="t">Omitido: estabas en una llamada</div><div class="p">Trabajo</div>
+            <div class="d">12/8/26, 12:04</div></div></div>
+          <div class="log"><span class="ic ok">✓</span><div>
+            <div class="t">Lo activaste tú</div><div class="p">Reunión</div>
+            <div class="d">12/8/26, 10:15</div></div></div>
+          <div class="log"><span class="ic bad">⚠</span><div>
+            <div class="t">Bloqueado: falta el acceso a No molestar</div><div class="p">Noche</div>
+            <div class="d">11/8/26, 23:00</div></div></div>
+          <div class="log"><span class="ic ok">✓</span><div>
+            <div class="t">Recuperado tras reiniciar</div>
+            <div class="d">11/8/26, 8:42</div></div></div>
+          <div class="log"><span class="ic ok">✓</span><div>
+            <div class="t">Cambió la zona horaria</div>
+            <div class="d">10/8/26, 16:20</div></div></div>
+        </div>
+      </div>
+      <div class="navbar">
+        <div class="navitem"><div class="ic">🎚</div>Perfiles</div>
+        <div class="navitem on"><div class="ic">🕘</div>Actividad</div>
+        <div class="navitem"><div class="ic">⚙</div>Ajustes</div>
+      </div>
+    </div></div>
+    <figcaption><b>Actividad</b><span>«¿Por qué sonó así a las 3 de la mañana?». Cada línea guarda la zona
+    horaria vigente en ese momento, así que la hora que se muestra es la que el usuario vio, no la de hoy
+    tras haber viajado.</span></figcaption>
+  </figure>
+
+  <!-- 5 · DIAGNÓSTICO -->
+  <figure>
+    <div class="phone"><div class="screen">
+      <div class="statusbar"><span>14:05</span><span>▾ ▮ 61%</span></div>
+      <div class="appbar"><h2>Salud</h2></div>
+      <div class="body"><div class="scroll">
+        <div style="font-size:21px;font-weight:600;margin:4px 0 8px">Hay cosas que necesitan tu atención</div>
+        <div class="check"><span class="ic bad">⚠</span><div class="info">
+          <div class="t">Acceso a No molestar</div>
+          <div class="w">Sin él la app no puede silenciar el timbre ni fijar un modo.</div>
+        </div><span class="cta">Conceder</span></div>
+        <div class="check"><span class="ic ok">✓</span><div class="info">
+          <div class="t">Alarmas exactas</div></div></div>
+        <div class="check"><span class="ic bad">⚠</span><div class="info">
+          <div class="t">Optimización de batería</div>
+          <div class="w">Tu móvil puede detener la app mientras duermes, que es justo cuando corre el horario de noche.</div>
+        </div><span class="cta">Abrir ajustes</span></div>
+        <div class="hr"></div>
+        <div class="stat">Próximo cambio programado</div>
+        <div class="stat">Nivel de actividad según Android: WORKING_SET</div>
+        <div class="stat">Veces que el vigilante lo ha arreglado: 2</div>
+        <div class="stat bad" style="margin-top:8px;line-height:1.45">Tu móvil forzó la detención de
+          SonoRitmo. Desde entonces y hasta que la abriste, no se aplicó ninguna regla.</div>
+        <div class="stat" style="margin-top:8px;line-height:1.45">Tu móvil (XIAOMI) es conocido por
+          detener apps en segundo plano de forma agresiva.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+          <span class="cta">AUTOSTART</span><span class="cta">BATTERY_SAVER</span>
+        </div>
+        <div class="hr"></div>
+        <div style="display:flex;align-items:center;gap:11px">
+          <div style="flex:1">
+            <div style="font-size:14.5px;font-weight:550">Modo de máxima fiabilidad</div>
+            <div class="w" style="font-size:11.5px;color:var(--on-surface-variant);margin-top:2px;line-height:1.4">
+              Usa el programador de despertador, que ningún ahorro de batería puede aplazar.
+              Pone un icono de alarma en la barra de estado.</div>
+          </div>
+          <span class="sw"><i></i></span>
+        </div>
+      </div></div>
+    </div></div>
+    <figcaption><b>Salud y permisos</b><span>Convierte las negativas silenciosas de Android en frases
+    accionables. Contra un <i>force stop</i> no hay defensa técnica; lo que sí hay es decirlo, con fechas,
+    en vez de dejar que parezca que la app no funciona.</span></figcaption>
+  </figure>
+
+  <!-- 6 · AJUSTES -->
+  <figure>
+    <div class="phone"><div class="screen">
+      <div class="statusbar"><span>14:06</span><span>▾ ▮ 61%</span></div>
+      <div class="appbar"><h2>Ajustes</h2></div>
+      <div class="body"><div class="scroll">
+        <div class="section">TEMA</div>
+        <div class="chips">
+          <span class="chip on">Seguir al sistema</span><span class="chip">Claro</span><span class="chip">Oscuro</span>
+        </div>
+        <div class="toggle-row" style="margin-top:10px"><span>Usar los colores de mi fondo</span><span class="sw on"><i></i></span></div>
+        <div class="hr"></div>
+        <div class="section">PERFIL QUE SE APLICA CUANDO NO HAY NADA PROGRAMADO</div>
+        <div class="radio"><span class="rd on"></span>Restaurar lo que hubiera antes</div>
+        <div class="radio"><span class="rd"></span>Noche</div>
+        <div class="radio"><span class="rd"></span>Trabajo</div>
+        <div class="radio"><span class="rd"></span>Fin de semana</div>
+        <div class="hr"></div>
+        <div class="section">COPIA DE SEGURIDAD</div>
+        <div class="btn-out">Exportar a un archivo</div>
+        <div class="btn-out">Importar desde un archivo</div>
+        <div class="hr"></div>
+        <div class="btn-out">Salud y permisos</div>
+        <div class="microcopy" style="margin-top:24px;text-align:center;line-height:1.5">
+          Esta app no tiene permiso de internet.<br>Compruébalo tú mismo en el manifiesto.
+        </div>
+      </div></div>
+      <div class="navbar">
+        <div class="navitem"><div class="ic">🎚</div>Perfiles</div>
+        <div class="navitem"><div class="ic">🕘</div>Actividad</div>
+        <div class="navitem on"><div class="ic">⚙</div>Ajustes</div>
+      </div>
+    </div></div>
+    <figcaption><b>Ajustes</b><span>La nota final no es un eslogan: el manifiesto no declara
+    <code>INTERNET</code>, y la CI rompe el build si alguien lo añade. Una promesa de privacidad que se
+    puede comprobar en treinta segundos.</span></figcaption>
+  </figure>
+
+</div>
+
+<div class="surfaces">
+  <h3>Superficies fuera de la app</h3>
+  <p class="sub2">El mosaico y el widget no son adornos. <code>onStartListening</code> del mosaico se
+  invoca cada vez que despliegas los Ajustes Rápidos —el sustituto más cercano de «el usuario acaba de
+  desbloquear»— y una app con widget activo queda exenta del bucket <i>restricted</i>, el que solo permite
+  una alarma al día.</p>
+  <div class="srow">
+    <div class="shade">
+      <div style="font-size:11px;opacity:.6;margin-bottom:10px">Ajustes rápidos</div>
+      <div class="tiles">
+        <div class="tile on"><span style="font-size:18px">🔊</span><div><div class="tn">Noche</div><div class="ts">Activo</div></div></div>
+        <div class="tile"><span style="font-size:18px">📶</span><div><div class="tn">Wi-Fi</div><div class="ts">Casa</div></div></div>
+        <div class="tile"><span style="font-size:18px">🔵</span><div><div class="tn">Bluetooth</div><div class="ts">Desactivado</div></div></div>
+        <div class="tile"><span style="font-size:18px">🔦</span><div><div class="tn">Linterna</div><div class="ts"></div></div></div>
+      </div>
+      <div style="font-size:11px;opacity:.6;margin:14px 0 8px">Tras pulsar el mosaico</div>
+      <div class="tiles">
+        <div class="tile"><span style="font-size:18px">⏸</span><div><div class="tn">En pausa</div><div class="ts">1 hora</div></div></div>
+        <div class="tile" style="opacity:.35"><span style="font-size:18px">🔊</span><div><div class="tn">Sin perfil</div><div class="ts"></div></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="widget">
+        <div class="wt">Noche</div>
+        <div class="ws">Activo ahora</div>
+      </div>
+      <div class="widget" style="margin-top:16px">
+        <div class="wt">Sin perfil</div>
+        <div class="ws">Esperando al siguiente horario</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Generado a partir de <code>core/ui/theme/Theme.kt</code>, <code>feature/profiles</code>,
+  <code>feature/tools</code> y los <code>strings.xml</code> de los cinco módulos con recursos.
+  Lo que aquí se aproxima son las tipografías del sistema, los iconos (Material Symbols reales en la app)
+  y el color dinámico, que en un móvil real deriva del fondo de pantalla.
+</footer>
+
+<script>
+const light=document.getElementById('btn-light'), dark=document.getElementById('btn-dark');
+function setTheme(isDark){
+  document.body.classList.toggle('dark',isDark);
+  light.setAttribute('aria-pressed',String(!isDark));
+  dark.setAttribute('aria-pressed',String(isDark));
+}
+light.onclick=()=>setTheme(false);
+dark.onclick=()=>setTheme(true);
+</script>
+</body>
+</html>
