@@ -2,7 +2,6 @@ package com.sonoritmo.app.widget
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
@@ -18,9 +17,6 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-// The day/night pair lives in the appwidget artifact; androidx.glance.unit only offers the
-// single-colour and resource-id overloads.
-import androidx.glance.appwidget.unit.ColorProvider
 import com.sonoritmo.app.MainActivity
 import com.sonoritmo.app.R
 import com.sonoritmo.core.data.repository.SchedulingWorldRepository
@@ -98,17 +94,16 @@ private fun WidgetBody(title: String, subtitle: String) {
         verticalAlignment = Alignment.Vertical.CenterVertically,
         horizontalAlignment = Alignment.Horizontal.Start,
     ) {
+        // Taken from the theme rather than hard-coded: the background above is
+        // GlanceTheme.colors.surface, and only its matching onSurface pair is guaranteed to
+        // stay legible against it in light mode, in dark mode and under dynamic colour.
         Text(
             text = title,
-            style = TextStyle(
-                color = ColorProvider(day = Color.Black, night = Color.White),
-            ),
+            style = TextStyle(color = GlanceTheme.colors.onSurface),
         )
         Text(
             text = subtitle,
-            style = TextStyle(
-                color = ColorProvider(day = Color.DarkGray, night = Color.LightGray),
-            ),
+            style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant),
         )
     }
 }
