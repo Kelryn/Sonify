@@ -107,6 +107,12 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
+      # The wrapper's exec bit does not survive a Windows working copy: git there cannot
+      # represent it, so every commit made from Windows silently re-records gradlew as
+      # 0644 and the runner fails with exit code 126 before Gradle is ever reached.
+      - name: Make the wrapper executable
+        run: chmod +x ./gradlew
+
       - name: Unit tests
         run: ./gradlew testDebugUnitTest :core:domain:test --stacktrace
 
@@ -137,6 +143,9 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Make the wrapper executable
+        run: chmod +x ./gradlew
 
       - name: Assemble debug
         run: ./gradlew assembleDebug --stacktrace

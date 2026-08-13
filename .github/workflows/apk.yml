@@ -38,6 +38,7 @@ jobs:
       - name: Assemble
         id: assemble
         run: |
+          chmod +x ./gradlew
           variant='${{ github.event.inputs.variant || 'debug' }}'
           if [ "$variant" = "release" ]; then
             ./gradlew assembleRelease --stacktrace
