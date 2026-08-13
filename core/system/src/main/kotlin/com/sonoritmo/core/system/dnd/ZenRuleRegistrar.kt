@@ -287,7 +287,7 @@ class ZenRuleRegistrarImpl @Inject constructor(
             builder.showInAmbientDisplay(false)
         }
         if (suppressedHas(NotificationManager.Policy.SUPPRESSED_EFFECT_NOTIFICATION_LIST)) {
-            builder.showNotificationList(false)
+            builder.showInNotificationList(false)
         }
     }
 

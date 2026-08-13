@@ -40,7 +40,7 @@ class ZenRuleCleanerImpl @Inject constructor(
 
     override fun removeOrphans(knownRuleIds: Set<String>): Int =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            registrar.get().removeOrphans(knownRuleIds)
+            registrar.get().sweepOrphans(knownRuleIds)
         } else {
             0
         }
