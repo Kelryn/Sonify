@@ -51,10 +51,16 @@ class BackupRoundTripTest {
                 list.map { it.copy(id = ScheduleId.UNSAVED) }.sortedBy { it.uuid }
             }
 
-        assertThat(preview.schedulesByProfileUuid.keys).isEqualTo(expected.keys)
+        // The reader keys the map by profile, not by "the profiles that happen to own a
+        // schedule", so a profile with none of its own is present with an empty list.
+        // Grouping the expectation from the schedules cannot express that, hence the
+        // separate assertions.
+        assertThat(preview.schedulesByProfileUuid.keys)
+            .containsExactlyElementsIn(TestData.allProfiles().map { it.uuid })
         expected.forEach { (uuid, schedules) ->
             assertThat(preview.schedulesByProfileUuid[uuid]).containsExactlyElementsIn(schedules)
         }
+        assertThat(preview.schedulesByProfileUuid[TestData.MINIMAL_UUID]).isEmpty()
     }
 
     @Test
