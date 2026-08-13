@@ -19,6 +19,4 @@
     <string name="widget_active_subtitle">Activo ahora</string>
     <string name="widget_description">Muestra el perfil de sonido activo</string>
 
-    <string name="fgs_special_use_subtype">Aplica el perfil de sonido programado por el usuario y su transición, y se detiene.</string>
-
 </resources>

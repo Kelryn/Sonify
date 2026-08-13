@@ -19,6 +19,11 @@
     <string name="widget_active_subtitle">Active now</string>
     <string name="widget_description">Shows the active sound profile</string>
 
-    <string name="fgs_special_use_subtype">Applies the user\'s scheduled sound profile and volume ramp, then stops.</string>
+    <!--
+      Read by Play's reviewers to justify the specialUse foreground service type, never
+      shown to a user. A manifest property is resolved once at install time, so a value
+      that varies by locale is a lint error (ManifestResource) as well as meaningless here.
+    -->
+    <string name="fgs_special_use_subtype" translatable="false">Applies the user\'s scheduled sound profile and volume ramp, then stops.</string>
 
 </resources>
