@@ -1,5 +1,6 @@
 package com.sonoritmo.core.data.backup
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -49,6 +50,10 @@ object BackupFormat {
      */
     const val MAX_FILE_BYTES = 5L * 1024 * 1024
 
+    // prettyPrintIndent and explicitNulls are still marked experimental. Both are load
+    // bearing here: RF-36 asks for a file a person can read, and a missing key means
+    // something different from an explicit null to that reader.
+    @OptIn(ExperimentalSerializationApi::class)
     val json: Json = Json {
         prettyPrint = true
         prettyPrintIndent = "  "
