@@ -1,6 +1,5 @@
 package com.sonoritmo.feature.tools.diagnostics
 
-import android.app.AlarmManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -71,7 +70,7 @@ class DiagnosticsViewModel @Inject constructor(
      */
     fun exactAlarmIntent(): Intent? =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            Intent(AlarmManager.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+            Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
                 .setData(Uri.fromParts("package", context.packageName, null))
         } else {
             null

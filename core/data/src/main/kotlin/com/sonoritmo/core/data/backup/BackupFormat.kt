@@ -50,6 +50,12 @@ object BackupFormat {
      */
     const val MAX_FILE_BYTES = 5L * 1024 * 1024
 
+    /**
+     * kotlinx.serialization's own default indent, and the only value it accepts when
+     * pretty printing is disabled.
+     */
+    private const val DEFAULT_JSON_INDENT = "    "
+
     // prettyPrintIndent and explicitNulls are still marked experimental. Both are load
     // bearing here: RF-36 asks for a file a person can read, and a missing key means
     // something different from an explicit null to that reader.
@@ -72,8 +78,13 @@ object BackupFormat {
     }
 
     /** Compact, key-sorted output, used only to compute the checksum. */
+    // The indent has to be put back to its default as well: this configuration inherits it
+    // from [json], and kotlinx.serialization rejects a non-default indent when pretty
+    // printing is off — from the object initialiser, so the whole object fails to load.
+    @OptIn(ExperimentalSerializationApi::class)
     private val canonicalJson: Json = Json(json) {
         prettyPrint = false
+        prettyPrintIndent = DEFAULT_JSON_INDENT
     }
 
     /**
