@@ -1,10 +1,12 @@
 name: Build APK
 
-# Produces an installable APK and attaches it to a GitHub Release.
+# Produces an installable APK.
 #
-# Why a release rather than a workflow artifact: artifacts are served as zip files
-# through an authenticated URL, which is awkward to download and unpack on a phone.
-# A release asset is a plain .apk link you can tap on the device you want to install it on.
+# A release asset is a plain .apk link you can tap on the phone you want to install it on,
+# which a workflow artifact — a zip behind an authenticated URL — is not. But this
+# repository is public, and both variants are signed with the debug keystore, so handing
+# strangers a debug-signed build is not something to do by accident. Tags publish, because
+# that is what a tag is for; a manual run only publishes if it is asked to.
 on:
   push:
     tags: ['v*']
@@ -16,6 +18,11 @@ on:
         default: 'debug'
         type: choice
         options: [debug, release]
+      publish:
+        description: 'Also attach the APK to a public GitHub Release'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -60,6 +67,7 @@ jobs:
           path: ${{ steps.assemble.outputs.path }}
 
       - name: Publish as a release asset
+        if: github.ref_type == 'tag' || inputs.publish
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
