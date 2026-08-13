@@ -1,0 +1,179 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.console=plain
+
+jobs:
+  # ───────────────────────────────────────────────────────────────────────────
+  #  The cheapest and most valuable job in the pipeline.
+  #
+  #  :core:domain is pure Kotlin on purpose: it is what makes the decision-making core
+  #  of the app verifiable without an Android toolchain. A single `import android.`
+  #  would quietly take that away, so it is enforced rather than trusted.
+  # ───────────────────────────────────────────────────────────────────────────
+  static:
+    name: Static checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Purity guard: no Android in the pure modules"
+        run: |
+          if grep -rn --include='*.kt' '^import android\.' core/domain/src/main; then
+            echo "::error::core:domain must not depend on the Android SDK."
+            exit 1
+          fi
+          echo "core:domain is clean."
+
+      - name: Required project files
+        run: |
+          missing=0
+          for f in README.md LICENSE CONTRIBUTING.md CHANGELOG.md \
+                   docs/00-INVESTIGACION.md docs/01-ESPECIFICACIONES.md \
+                   docs/02-REVISION-EQUIPO.md docs/03-PLAN-DESARROLLO.md \
+                   docs/04-DESARROLLO.md docs/05-QA.md docs/06-PUBLICACION.md; do
+            if [ ! -f "$f" ]; then echo "::error::missing $f"; missing=1; fi
+          done
+          exit $missing
+
+      - name: Manifest allow-list
+        run: |
+          # A public, checkable promise: this app has no network access. If INTERNET is
+          # ever *declared* in a manifest, the build stops. The pattern deliberately
+          # matches a uses-permission element rather than the bare word, so the comment in
+          # app/src/main/AndroidManifest.xml explaining the absence does not trip it.
+          if grep -rEn '<uses-permission[^>]*android\.permission\.INTERNET' \
+               --include='AndroidManifest.xml' .; then
+            echo "::error::INTERNET permission is not allowed in this project."
+            exit 1
+          fi
+          echo "No INTERNET permission declared."
+
+  # ───────────────────────────────────────────────────────────────────────────
+  #  Domain self-check: the same assertions the developers can run locally with
+  #  nothing but kotlinc, kept in CI so the two can never drift apart.
+  # ───────────────────────────────────────────────────────────────────────────
+  selfcheck:
+    name: Domain self-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install Kotlin compiler
+        run: |
+          curl -sSL -o kotlin.zip \
+            https://github.com/JetBrains/kotlin/releases/download/v2.1.20/kotlin-compiler-2.1.20.zip
+          unzip -q kotlin.zip -d "$HOME"
+          echo "$HOME/kotlinc/bin" >> "$GITHUB_PATH"
+
+      - name: Compile and run
+        run: |
+          kotlinc $(find core/domain/src/main -name '*.kt') tools/selfcheck/DomainSelfCheck.kt \
+            -include-runtime -d selfcheck.jar
+          java -jar selfcheck.jar
+
+  unit:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: [static]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Make the wrapper executable
+        # Git records the executable bit, but a round trip through a Windows checkout can
+        # drop it, and the runner then refuses to execute the script (exit 126). Cheap and
+        # idempotent, so it is not worth relying on the recorded mode alone.
+        run: chmod +x ./gradlew
+
+      - name: Unit tests
+        run: ./gradlew testDebugUnitTest :core:domain:test --stacktrace
+
+      - name: Coverage
+        run: ./gradlew koverVerify --stacktrace
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: |
+            **/build/reports/tests/
+            build/reports/kover/
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [static]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Make the wrapper executable
+        # Git records the executable bit, but a round trip through a Windows checkout can
+        # drop it, and the runner then refuses to execute the script (exit 126). Cheap and
+        # idempotent, so it is not worth relying on the recorded mode alone.
+        run: chmod +x ./gradlew
+
+      - name: Assemble debug
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Assemble release
+        run: ./gradlew assembleRelease --stacktrace
+
+      - name: APK size budget
+        run: |
+          # Measured on the minified release build, which is the only number that means
+          # anything to a user installing the app.
+          apk=$(find app/build/outputs/apk/release -name '*.apk' | head -1)
+          size=$(stat -c%s "$apk")
+          echo "Release APK: $apk ($size bytes)"
+          echo "### Release APK: $((size / 1024)) KiB" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$size" -gt 8388608 ]; then
+            echo "::error::Release APK exceeds the 8 MiB budget."
+            exit 1
+          fi
+
+      - name: Android Lint
+        run: ./gradlew lintRelease --stacktrace
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: apk-debug
+          path: app/build/outputs/apk/debug/*.apk
