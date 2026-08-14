@@ -1,3 +1,6 @@
+/** Path CI writes the decoded signing key to, relative to the root project. */
+private const val RELEASE_KEYSTORE = "release-keystore.p12"
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -21,6 +24,32 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // The keystore is written by CI from a repository secret and is never committed. It is
+    // absent on a fresh clone and on pull requests from forks, where secrets are withheld,
+    // so its absence has to be a fallback rather than an error: `assembleRelease` still has
+    // to run there for the APK size budget to mean anything.
+    val keystore = rootProject.file(RELEASE_KEYSTORE)
+    val keystorePassword = providers.environmentVariable("SIGNING_KEYSTORE_PASSWORD").orNull
+
+    signingConfigs {
+        if (keystore.exists() && !keystorePassword.isNullOrBlank()) {
+            create("release") {
+                storeFile = keystore
+                storeType = "PKCS12"
+                storePassword = keystorePassword
+                keyPassword = keystorePassword
+                // Read back out of the file rather than hard-coded. The store was not
+                // produced by keytool, so its alias is whatever the exporting tool wrote;
+                // a guess that does not match fails during signing, which is the most
+                // expensive place in the pipeline to discover it.
+                keyAlias = java.security.KeyStore.getInstance("PKCS12").run {
+                    keystore.inputStream().use { load(it, keystorePassword.toCharArray()) }
+                    aliases().nextElement()
+                }
+            }
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
@@ -33,9 +62,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            // Debug signing so that CI can produce a verifiable release APK
-            // for the size check (RNF-04). Real releases are signed out of band.
-            signingConfig = signingConfigs.getByName("debug")
+            // The debug key is public and identical on every machine on earth, which is
+            // exactly why Play Protect treats a build signed with it more harshly than one
+            // signed with an unknown but unique key.
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
         }
     }
 

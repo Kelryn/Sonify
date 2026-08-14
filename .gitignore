@@ -11,3 +11,6 @@ captures/
 *.aab
 *.jks
 *.keystore
+# Written by CI from a repository secret, and never by a commit.
+*.p12
+release-keystore.*
