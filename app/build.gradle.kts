@@ -1,5 +1,6 @@
-/** Path CI writes the decoded signing key to, relative to the root project. */
-private const val RELEASE_KEYSTORE = "release-keystore.p12"
+// Kotlin DSL scripts do not carry java.security in their implicit imports, and the plugins
+// block has to be the first statement, so this cannot be a top-level constant either.
+import java.security.KeyStore
 
 plugins {
     alias(libs.plugins.android.application)
@@ -28,7 +29,7 @@ android {
     // absent on a fresh clone and on pull requests from forks, where secrets are withheld,
     // so its absence has to be a fallback rather than an error: `assembleRelease` still has
     // to run there for the APK size budget to mean anything.
-    val keystore = rootProject.file(RELEASE_KEYSTORE)
+    val keystore = rootProject.file("release-keystore.p12")
     val keystorePassword = providers.environmentVariable("SIGNING_KEYSTORE_PASSWORD").orNull
 
     signingConfigs {
@@ -42,7 +43,7 @@ android {
                 // produced by keytool, so its alias is whatever the exporting tool wrote;
                 // a guess that does not match fails during signing, which is the most
                 // expensive place in the pipeline to discover it.
-                keyAlias = java.security.KeyStore.getInstance("PKCS12").run {
+                keyAlias = KeyStore.getInstance("PKCS12").run {
                     keystore.inputStream().use { load(it, keystorePassword.toCharArray()) }
                     aliases().nextElement()
                 }
