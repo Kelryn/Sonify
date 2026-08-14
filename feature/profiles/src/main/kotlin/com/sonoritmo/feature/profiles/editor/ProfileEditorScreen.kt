@@ -1,7 +1,11 @@
 package com.sonoritmo.feature.profiles.editor
 
+import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -20,6 +25,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -27,13 +33,19 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -44,6 +56,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sonoritmo.core.domain.model.DndMode
 import com.sonoritmo.core.domain.model.ProfileOptions
 import com.sonoritmo.core.domain.model.RingerMode
+import com.sonoritmo.core.domain.model.Schedule
 import com.sonoritmo.core.domain.model.SoundProfile
 import com.sonoritmo.core.domain.model.ValidationIssue
 import com.sonoritmo.core.ui.component.DayPicker
@@ -240,39 +253,65 @@ private fun VolumesSection(
     }
 }
 
+/**
+ * Chips in equal-width pairs that wrap.
+ *
+ * A single [Row] gave the last chip whatever space the others had left over, which on a
+ * narrow screen is almost none — the rightmost option came out crushed and unreadable.
+ * Two per row with equal weights means every option is the same size and none of them
+ * depends on how long its neighbours' labels are in the current language.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun ChipGrid(content: @Composable FlowRowScope.() -> Unit) {
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        maxItemsInEachRow = 2,
+        content = content,
+    )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun RingerSection(profile: SoundProfile, viewModel: ProfileEditorViewModel) {
     SectionHeader(stringResource(R.string.editor_section_ringer))
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+    ChipGrid {
         FilterChip(
             selected = profile.ringerMode == null,
             onClick = { viewModel.onRingerChange(null) },
             label = { Text(stringResource(R.string.editor_ringer_unchanged)) },
+            modifier = Modifier.weight(1f),
         )
         RingerMode.entries.forEach { mode ->
             FilterChip(
                 selected = profile.ringerMode == mode,
                 onClick = { viewModel.onRingerChange(mode) },
                 label = { Text(ScheduleFormatter.ringerLabel(mode)) },
+                modifier = Modifier.weight(1f),
             )
         }
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun DndSection(profile: SoundProfile, viewModel: ProfileEditorViewModel) {
     SectionHeader(stringResource(R.string.editor_section_dnd))
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+    ChipGrid {
         FilterChip(
             selected = profile.dnd.mode == null,
             onClick = { viewModel.onDndModeChange(null) },
             label = { Text(stringResource(R.string.editor_ringer_unchanged)) },
+            modifier = Modifier.weight(1f),
         )
         DndMode.entries.forEach { mode ->
             FilterChip(
                 selected = profile.dnd.mode == mode,
                 onClick = { viewModel.onDndModeChange(mode) },
                 label = { Text(dndLabel(mode)) },
+                modifier = Modifier.weight(1f),
             )
         }
     }
@@ -295,24 +334,45 @@ private fun dndLabel(mode: DndMode): String = stringResource(
     },
 )
 
+/** Which end of which window the time dialog is currently editing. */
+private data class TimeEdit(val uuid: String, val isStart: Boolean, val minuteOfDay: Int)
+
 @Composable
 private fun SchedulesSection(state: ProfileEditorUiState, viewModel: ProfileEditorViewModel) {
+    var editing by remember { mutableStateOf<TimeEdit?>(null) }
+
     SectionHeader(stringResource(R.string.editor_section_schedules))
     state.schedules.forEach { schedule ->
         Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = ScheduleFormatter.range(schedule), modifier = Modifier.weight(1f))
-                Text(
-                    text = stringResource(
-                        R.string.schedule_duration,
-                        ScheduleFormatter.duration(schedule.durationMinutes),
-                    ),
-                    style = MaterialTheme.typography.labelMedium,
+                TimeButton(
+                    label = stringResource(R.string.schedule_from),
+                    minuteOfDay = schedule.startMinuteOfDay,
+                    onClick = {
+                        editing = TimeEdit(schedule.uuid, true, schedule.startMinuteOfDay)
+                    },
+                    modifier = Modifier.weight(1f),
+                )
+                TimeButton(
+                    label = stringResource(R.string.schedule_to),
+                    minuteOfDay = schedule.endMinuteOfDay,
+                    onClick = {
+                        editing = TimeEdit(schedule.uuid, false, schedule.endMinuteOfDay)
+                    },
+                    modifier = Modifier.weight(1f),
                 )
                 IconButton(onClick = { viewModel.onScheduleDelete(schedule.uuid) }) {
                     Icon(Icons.Filled.Delete, stringResource(R.string.schedule_delete))
                 }
             }
+            Text(
+                text = stringResource(
+                    R.string.schedule_duration,
+                    ScheduleFormatter.duration(schedule.durationMinutes),
+                ),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
             DayPicker(
                 daysMask = schedule.daysMask,
                 onMaskChange = { viewModel.onScheduleChange(schedule.copy(daysMask = it)) },
@@ -322,7 +382,86 @@ private fun SchedulesSection(state: ProfileEditorUiState, viewModel: ProfileEdit
     Button(onClick = viewModel::onAddSchedule, modifier = Modifier.fillMaxWidth()) {
         Text(stringResource(R.string.editor_add_schedule))
     }
+
+    val edit = editing
+    if (edit != null) {
+        TimeEditDialog(
+            initialMinuteOfDay = edit.minuteOfDay,
+            onDismiss = { editing = null },
+            onConfirm = { minuteOfDay ->
+                state.schedules.firstOrNull { it.uuid == edit.uuid }?.let { schedule ->
+                    viewModel.onScheduleChange(
+                        if (edit.isStart) {
+                            schedule.withStart(minuteOfDay)
+                        } else {
+                            schedule.withEnd(minuteOfDay)
+                        },
+                    )
+                }
+                editing = null
+            },
+        )
+    }
 }
+
+@Composable
+private fun TimeButton(
+    label: String,
+    minuteOfDay: Int,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    OutlinedButton(onClick = onClick, modifier = modifier) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(text = label, style = MaterialTheme.typography.labelSmall)
+            Text(text = ScheduleFormatter.time(minuteOfDay), style = MaterialTheme.typography.titleMedium)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TimeEditDialog(
+    initialMinuteOfDay: Int,
+    onDismiss: () -> Unit,
+    onConfirm: (Int) -> Unit,
+) {
+    // TimeInput rather than the dial: the dial is about 360 dp wide and gets clipped inside
+    // an AlertDialog on a narrow screen, which is the shape this app is used in.
+    val timeState = rememberTimePickerState(
+        initialHour = initialMinuteOfDay / 60,
+        initialMinute = initialMinuteOfDay % 60,
+        is24Hour = DateFormat.is24HourFormat(LocalContext.current),
+    )
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = { onConfirm(timeState.hour * 60 + timeState.minute) }) {
+                Text(stringResource(android.R.string.ok))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(android.R.string.cancel)) }
+        },
+        text = { TimeInput(state = timeState) },
+    )
+}
+
+/**
+ * Moving one end of a window leaves the other where it is; the duration absorbs the change.
+ *
+ * `end == start` is a full day rather than an empty window, which is the same reading
+ * [Schedule.fromWallClock] uses, and it is why the arithmetic is written to land in
+ * `1..1440` instead of `0..1439` — a zero-length window would loop forever.
+ */
+private fun Schedule.withStart(minuteOfDay: Int): Schedule =
+    copy(startMinuteOfDay = minuteOfDay, durationMinutes = spanBetween(minuteOfDay, endMinuteOfDay))
+
+private fun Schedule.withEnd(minuteOfDay: Int): Schedule =
+    copy(durationMinutes = spanBetween(startMinuteOfDay, minuteOfDay))
+
+private fun spanBetween(start: Int, end: Int): Int =
+    ((end - start + Schedule.MINUTES_PER_DAY - 1) % Schedule.MINUTES_PER_DAY) + 1
 
 @Composable
 private fun OptionsSection(profile: SoundProfile, viewModel: ProfileEditorViewModel) {

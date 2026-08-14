@@ -72,6 +72,7 @@
     <string name="issue_schedule_duration_out_of_range">Un horario tiene una duración imposible.</string>
     <string name="issue_schedule_orphaned">Un horario no está asociado a este perfil.</string>
 
+    <string name="template_blank">Perfil en blanco</string>
     <string name="template_night">Noche</string>
     <string name="template_work">Trabajo</string>
     <string name="template_meeting">Reunión</string>
@@ -87,7 +88,7 @@
     <string name="editor_section_dnd">No molestar</string>
     <string name="editor_section_schedules">Horarios</string>
     <string name="editor_section_options">Opciones</string>
-    <string name="editor_ringer_unchanged">Dejarlo como esté</string>
+    <string name="editor_ringer_unchanged">Sin cambios</string>
     <string name="editor_priority">Prioridad: %1$d</string>
     <string name="editor_priority_help">Cuando dos horarios se solapan, gana el de mayor prioridad.</string>
     <string name="editor_restore_on_exit">Restaurar el sonido anterior al terminar</string>
@@ -100,8 +101,8 @@
     <string name="editor_stream_unsupported">Android no permite que las apps cambien este</string>
     <string name="editor_ring_coupled">En este dispositivo el tono y las notificaciones se mueven juntos</string>
     <string name="editor_dnd_mode">Modo</string>
-    <string name="editor_dnd_release">Liberar mi regla</string>
-    <string name="editor_dnd_priority">Solo prioritarias</string>
+    <string name="editor_dnd_release">Liberar</string>
+    <string name="editor_dnd_priority">Prioritarias</string>
     <string name="editor_dnd_alarms">Solo alarmas</string>
     <string name="editor_dnd_total">Silencio total</string>
     <string name="editor_dnd_calls">Permitir llamadas de</string>

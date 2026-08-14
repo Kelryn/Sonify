@@ -1,6 +1,7 @@
 package com.sonoritmo.app.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Settings
@@ -79,7 +80,13 @@ fun SonoRitmoApp(navController: NavHostController = rememberNavController()) {
         NavHost(
             navController = navController,
             startDestination = ROUTE_PROFILES,
-            modifier = Modifier.fillMaxSize(),
+            // Only the bottom inset is consumed here. Each screen brings its own Scaffold and
+            // handles its own top bar, so passing the whole PaddingValues down would inset the
+            // top twice; but a screen's Scaffold cannot know about the navigation bar below it,
+            // and without this its floating action button is laid out underneath the tabs.
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = padding.calculateBottomPadding()),
         ) {
             profilesGraph(
                 onOpenDiagnostics = { navController.navigate(ROUTE_DIAGNOSTICS) },
@@ -88,10 +95,6 @@ fun SonoRitmoApp(navController: NavHostController = rememberNavController()) {
             )
             toolsGraph(onOpenDiagnostics = { navController.navigate(ROUTE_DIAGNOSTICS) })
         }
-        // `padding` is consumed by the individual screens' own Scaffolds so that each one
-        // controls its own insets; a single outer padding would double-inset the top bars.
-        @Suppress("UNUSED_EXPRESSION")
-        padding
     }
 }
 

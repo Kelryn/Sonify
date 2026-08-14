@@ -2,6 +2,31 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.2.0] — 2026-08-14
+
+Correcciones de la primera revisión de la app en uso real.
+
+### Añadido
+
+- **Las horas de una franja se pueden editar.** Hasta ahora el editor mostraba el rango como
+  texto y solo dejaba cambiar los días o borrar la franja; ahora el inicio y el fin abren un
+  selector de hora. Mover un extremo deja el otro donde estaba y la duración es la que cede.
+- Opción **Perfil en blanco** en el selector de plantillas, que abre el editor vacío.
+
+### Cambiado
+
+- El botón flotante de la lista pasa a ser un **+** y abre el selector de plantillas, con el
+  perfil en blanco como primera opción.
+- El botón de pausa se convierte en **play** cuando las reglas están en pausa y sirve para
+  reanudarlas. Antes seguía diciendo «pausar» sin ofrecer vuelta atrás.
+- Las opciones de timbre y No molestar se reparten en filas de dos con el mismo ancho, en vez
+  de una sola fila donde la última quedaba aplastada. Sus etiquetas se han acortado.
+
+### Corregido
+
+- El botón flotante se dibujaba **por debajo de la barra de pestañas**: el `NavHost` no
+  consumía el hueco inferior del `Scaffold` de la aplicación.
+
 ## [1.1.0] — 2026-08-13
 
 Primera versión instalada en un dispositivo real. La 1.0.0 nunca llegó a ejecutarse: la

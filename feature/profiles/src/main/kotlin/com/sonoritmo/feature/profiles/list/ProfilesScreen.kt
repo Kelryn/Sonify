@@ -9,13 +9,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.PauseCircle
+import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
@@ -79,14 +79,27 @@ fun ProfilesScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.profiles_title)) },
                 actions = {
-                    // The template sheet used to hang off the empty state alone, so it
-                    // became unreachable the moment the first profile existed. It is the
-                    // fastest way to create a profile, so it belongs somewhere permanent.
-                    IconButton(onClick = { templateSheetOpen = true }) {
-                        Icon(Icons.Filled.AutoAwesome, stringResource(R.string.profiles_from_template))
-                    }
-                    IconButton(onClick = { viewModel.onEvent(ProfilesEvent.PauseAll(PAUSE_DEFAULT_MINUTES)) }) {
-                        Icon(Icons.Filled.PauseCircle, stringResource(R.string.pause_all))
+                    // One control, not two: a pause button that still says "pause" while
+                    // everything is paused gives the user no way back and no way to tell
+                    // which state they are in.
+                    val paused = state.status is ActiveStatus.Paused
+                    IconButton(
+                        onClick = {
+                            viewModel.onEvent(
+                                if (paused) {
+                                    ProfilesEvent.ResumeAll
+                                } else {
+                                    ProfilesEvent.PauseAll(PAUSE_DEFAULT_MINUTES)
+                                },
+                            )
+                        },
+                    ) {
+                        Icon(
+                            imageVector = if (paused) Icons.Filled.PlayCircle else Icons.Filled.PauseCircle,
+                            contentDescription = stringResource(
+                                if (paused) R.string.resume_all else R.string.pause_all,
+                            ),
+                        )
                     }
                     IconButton(onClick = onOpenDiagnostics) {
                         Icon(Icons.Filled.Tune, stringResource(R.string.banner_degraded_action))
@@ -95,11 +108,12 @@ fun ProfilesScreen(
             )
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { onEditProfile(null) },
-                icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text(stringResource(R.string.profiles_add)) },
-            )
+            // Opens the template sheet rather than an empty editor: the sheet's first entry
+            // is the empty profile, so nothing is lost and the six ready-made starting
+            // points stop being hidden behind a second control.
+            FloatingActionButton(onClick = { templateSheetOpen = true }) {
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.profiles_add))
+            }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { padding ->
@@ -147,6 +161,18 @@ fun ProfilesScreen(
     if (templateSheetOpen) {
         ModalBottomSheet(onDismissRequest = { templateSheetOpen = false }) {
             Column(modifier = Modifier.padding(bottom = 32.dp)) {
+                // Not a ProfileTemplate: an empty profile changes nothing, so building and
+                // saving one would be rejected by validation on the spot. It opens the
+                // editor instead, which is what "start from nothing" actually means.
+                TextButton(
+                    onClick = {
+                        templateSheetOpen = false
+                        onEditProfile(null)
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.template_blank))
+                }
                 ProfileTemplate.entries.forEach { template ->
                     val label = templateLabel(template)
                     TextButton(

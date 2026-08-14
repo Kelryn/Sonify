@@ -77,6 +77,7 @@
     <string name="issue_schedule_duration_out_of_range">A schedule has an impossible length.</string>
     <string name="issue_schedule_orphaned">A schedule is not attached to this profile.</string>
 
+    <string name="template_blank">Blank profile</string>
     <string name="template_night">Night</string>
     <string name="template_work">Work</string>
     <string name="template_meeting">Meeting</string>
@@ -92,7 +93,9 @@
     <string name="editor_section_dnd">Do Not Disturb</string>
     <string name="editor_section_schedules">Schedules</string>
     <string name="editor_section_options">Options</string>
-    <string name="editor_ringer_unchanged">Leave as it is</string>
+    <!-- Chip labels share a row two at a time and are laid out to equal widths, so they
+         have to stay short: anything longer wraps to three lines or gets clipped. -->
+    <string name="editor_ringer_unchanged">Unchanged</string>
     <string name="editor_priority">Priority: %1$d</string>
     <string name="editor_priority_help">When two schedules overlap, the higher priority wins.</string>
     <string name="editor_restore_on_exit">Restore previous sound when it ends</string>
@@ -105,8 +108,8 @@
     <string name="editor_stream_unsupported">Android does not let apps change this one</string>
     <string name="editor_ring_coupled">On this device the ringtone and notification volumes move together</string>
     <string name="editor_dnd_mode">Mode</string>
-    <string name="editor_dnd_release">Release my rule</string>
-    <string name="editor_dnd_priority">Priority only</string>
+    <string name="editor_dnd_release">Release</string>
+    <string name="editor_dnd_priority">Priority</string>
     <string name="editor_dnd_alarms">Alarms only</string>
     <string name="editor_dnd_total">Total silence</string>
     <string name="editor_dnd_calls">Allow calls from</string>
