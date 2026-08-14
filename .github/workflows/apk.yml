@@ -87,8 +87,9 @@ jobs:
           sdk="$ANDROID_HOME/build-tools"
           tools=$(ls -1 "$sdk" | sort -V | tail -1)
           "$sdk/$tools/apksigner" verify --print-certs -v "${{ steps.assemble.outputs.path }}" \
-            | grep -Ei 'Signer #1 certificate DN|Signer #1 certificate SHA-256|^Verified using v[234]' \
             | tee -a "$GITHUB_STEP_SUMMARY"
+          # aapt2 prints application-debuggable only when the flag is set, so its absence
+          # from this output is the result we want.
           "$sdk/$tools/aapt2" dump badging "${{ steps.assemble.outputs.path }}" \
             | grep -E "^(package|application-debuggable)" \
             | tee -a "$GITHUB_STEP_SUMMARY"
