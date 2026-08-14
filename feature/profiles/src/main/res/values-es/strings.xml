@@ -35,8 +35,10 @@
     <string name="profile_no_schedule">Solo manual</string>
     <string name="profile_duplicate">Duplicar</string>
     <string name="profile_delete">Eliminar</string>
-    <string name="profile_disable">Desactivar</string>
-    <string name="profile_enable">Activar</string>
+    <!-- Deliberately distinct from profile_deactivate: this one stops the profile from
+         ever activating, the other one only turns off the activation running right now. -->
+    <string name="profile_disable">Deshabilitar</string>
+    <string name="profile_enable">Habilitar</string>
     <string name="profile_activate_for">Activar durante…</string>
     <string name="profile_deactivate">Desactivar</string>
 
@@ -84,6 +86,8 @@
     <string name="editor_title_new">Nuevo perfil</string>
     <string name="editor_title_edit">Editar perfil</string>
     <string name="editor_name">Nombre</string>
+    <string name="editor_section_icon">Icono</string>
+    <string name="editor_icon_none">Inicial</string>
     <string name="editor_section_volumes">Volúmenes</string>
     <string name="editor_section_ringer">Timbre</string>
     <string name="editor_section_dnd">No molestar</string>

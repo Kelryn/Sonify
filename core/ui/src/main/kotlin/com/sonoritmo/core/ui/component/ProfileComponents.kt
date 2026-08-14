@@ -1,12 +1,12 @@
 package com.sonoritmo.core.ui.component
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -31,7 +31,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -41,15 +43,27 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
-/** One stream's setting, reduced to the icon and the number. */
+/** What a profile does to one stream, as far as a glance at the list is concerned. */
+enum class VolumeState {
+    /** Set to an audible level. */
+    SET,
+
+    /** Set, but to zero: the profile deliberately silences this stream. */
+    SILENCED,
+
+    /** Left exactly as the user had it. */
+    UNCHANGED,
+}
+
+/** One stream, reduced to an icon and how the profile treats it. */
 data class VolumeBadge(
     val icon: ImageVector,
-    val text: String,
+    val state: VolumeState,
     val contentDescription: String,
 )
 
-/** One window, split so the days and the hours can sit on their own lines. */
-data class ScheduleSummary(val days: String, val range: String)
+/** One window: the mask drives the day circles, the range is already formatted. */
+data class ScheduleSummary(val daysMask: Int, val range: String)
 
 /**
  * One profile in the list.
@@ -65,7 +79,6 @@ data class ScheduleSummary(val days: String, val range: String)
  * @param isActive drives both the container colour **and** the state description, so the
  *   active profile is obvious visually and unmistakable under TalkBack.
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ProfileCard(
     name: String,
@@ -138,40 +151,18 @@ fun ProfileCard(
                     overflow = TextOverflow.Ellipsis,
                 )
 
-                // Icons rather than a sentence. A written summary of six streams, a ringer
-                // mode and a window does not fit next to two buttons in any language, and
-                // truncating it hid exactly the part that distinguishes two profiles.
-                if (volumes.isNotEmpty()) {
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                    ) {
-                        volumes.forEach { badge ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(3.dp),
-                                modifier = Modifier.semantics {
-                                    contentDescription = badge.contentDescription
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = badge.icon,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(16.dp),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                                Text(
-                                    text = badge.text,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                        }
+                // Every writable stream, always, in a fixed order. Showing only the ones a
+                // profile touches made the row a different shape on every card and gave no
+                // way to see at a glance what a profile leaves alone.
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    volumes.forEach { badge ->
+                        VolumeGlyph(badge)
                     }
                 }
 
-                // No maxLines and no ellipsis anywhere below: the hours are the reason
-                // someone opens this screen, and half an hour is worse than none.
                 if (schedules.isEmpty()) {
                     Text(
                         text = noScheduleLabel,
@@ -179,12 +170,11 @@ fun ProfileCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 } else {
+                    // One days row and one hours row per window, in that order, with no
+                    // labels around either: "23:00 – 07:00" under seven letters needs no
+                    // explaining, and any extra word is what pushed this off the card.
                     schedules.forEach { schedule ->
-                        Text(
-                            text = schedule.days,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                        DayDots(daysMask = schedule.daysMask)
                         Text(
                             text = schedule.range,
                             style = MaterialTheme.typography.bodyMedium,
@@ -211,22 +201,66 @@ fun ProfileCard(
 }
 
 /**
+ * One stream icon in the three states a profile can leave it in.
+ *
+ * Silenced is drawn as the icon struck through rather than swapped for a different symbol:
+ * the row is meant to be read as a column of the same six streams on every card, and a
+ * substituted glyph breaks that scan.
+ */
+@Composable
+private fun VolumeGlyph(badge: VolumeBadge) {
+    val tint = when (badge.state) {
+        VolumeState.SET, VolumeState.SILENCED -> MaterialTheme.colorScheme.onSurface
+        VolumeState.UNCHANGED ->
+            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = UNCHANGED_ALPHA)
+    }
+
+    Box(
+        modifier = Modifier
+            .size(20.dp)
+            .semantics { contentDescription = badge.contentDescription },
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = badge.icon,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            tint = tint,
+        )
+        if (badge.state == VolumeState.SILENCED) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                drawLine(
+                    color = tint,
+                    start = Offset(x = 0f, y = size.height),
+                    end = Offset(x = size.width, y = 0f),
+                    strokeWidth = STRIKE_WIDTH.toPx(),
+                    cap = StrokeCap.Round,
+                )
+            }
+        }
+    }
+}
+
+private val STRIKE_WIDTH = 1.5.dp
+private const val UNCHANGED_ALPHA = 0.38f
+
+/**
  * One stream's slider, with an explicit "don't touch this one" switch.
  *
  * The switch is not decoration: `null` is a first-class value in the model, and a user who
  * only wants to change the ring volume must be able to leave media alone rather than being
  * forced to pick a number for it.
  *
- * @param steps the device's real step count. Anchoring the slider to it means "30 %" does
- *   not come back as "29 %" after a save, which is the rounding artefact users of the
- *   competition report as the app "changing their settings".
+ * The track is continuous. It used to be notched to the device's own step count so that
+ * "30 %" could not come back as "29 %" after the round trip through an index; the notches
+ * were the more visible cost, so the slider now moves freely and the value is a whole
+ * percent, which is the finest unit the model stores.
  */
 @Composable
 fun VolumeSliderRow(
     label: String,
     icon: ImageVector,
     percent: Int?,
-    steps: Int,
     enabledSwitchDescription: String,
     valueDescription: String,
     /** Just the number, shown beside the track. [valueDescription] is the spoken version. */
@@ -285,8 +319,6 @@ fun VolumeSliderRow(
                 onValueChange = { onPercentChange(it.toInt()) },
                 valueRange = 0f..100f,
                 enabled = enabled,
-                // One notch per real device step, so the thumb lands where the phone can go.
-                steps = (steps - 1).coerceAtLeast(0),
                 modifier = Modifier
                     .weight(1f)
                     .semantics { contentDescription = valueDescription },

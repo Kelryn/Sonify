@@ -38,17 +38,28 @@ object ScheduleFormatter {
         LocalTime.of(minuteOfDay / 60, minuteOfDay % 60)
             .format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale))
 
+    /**
+     * Just the two wall-clock times.
+     *
+     * A window that crosses midnight used to append "(next day)" to the end time. It is
+     * true and it is noise: `23:00 – 07:00` already reads as a night to everyone, and the
+     * annotation was long enough to push the line out of every list row it appeared in.
+     */
     @Composable
-    fun range(schedule: Schedule): String {
-        val start = time(schedule.startMinuteOfDay)
-        val end = time(schedule.endMinuteOfDay)
-        val endText = if (schedule.crossesMidnight) {
-            stringResource(R.string.ui_schedule_crosses_midnight, end)
+    fun range(schedule: Schedule): String = stringResource(
+        R.string.ui_schedule_range,
+        time(schedule.startMinuteOfDay),
+        time(schedule.endMinuteOfDay),
+    )
+
+    /** The number as it appears beside a slider; `NA` when the stream is left alone. */
+    @Composable
+    fun volumeValueLabel(percent: Int?): String =
+        if (percent == null) {
+            stringResource(R.string.ui_volume_na)
         } else {
-            end
+            stringResource(R.string.ui_volume_percent, percent)
         }
-        return stringResource(R.string.ui_schedule_range, start, endText)
-    }
 
     @Composable
     fun days(daysMask: Int, locale: Locale = Locale.getDefault()): String = when (daysMask) {

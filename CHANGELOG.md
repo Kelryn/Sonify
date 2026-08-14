@@ -2,6 +2,35 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.4.0] — 2026-08-14
+
+### Añadido
+
+- **Catálogo de iconos para el perfil**, con 24 opciones más «Inicial». El ViewModel ya sabía
+  cambiar el emoji desde la v1.0; simplemente no había ningún control que lo llamara.
+
+### Cambiado
+
+- **Las barras de volumen se mueven libremente de 0 a 100 %.** Estaban ancladas a los pasos
+  reales del dispositivo para que un 30 % no volviera como 29 %; las muescas resultaban más
+  molestas que ese redondeo, así que ahora la unidad es el punto porcentual.
+- Un volumen sin tocar muestra **NA** junto a la barra, en vez de «Sin cambios». El lector de
+  pantalla sigue diciendo «Sin cambios», porque NA no es una palabra.
+- **El resumen del perfil es ahora una sola fila con los seis streams**, siempre los seis y
+  siempre en el mismo orden: color fuerte si el perfil lo cambia, tachado si lo silencia, y
+  atenuado si lo deja como está. Debajo, un par de filas por franja: los siete días como
+  letras en círculo, marcados o no, y el horario. Sin texto adicional: un horario que cruza
+  medianoche se lee `23:00 – 07:00`, sin la coletilla «(día siguiente)».
+- En el menú del perfil, «Deshabilitar» (que impide que se active nunca) deja de llamarse
+  igual que «Desactivar» (que apaga la activación en curso).
+
+### Corregido
+
+- **El domingo salía aplastado** en el selector de días: siete círculos de 48 dp necesitan
+  336 dp y no caben en un móvil de 360 dp una vez descontados los márgenes. Ahora los siete
+  reparten el ancho a partes iguales, con separación entre ellos, y el área táctil conserva
+  sus 48 dp de alto.
+
 ## [1.3.0] — 2026-08-14
 
 Segunda tanda de correcciones de uso real, toda en la lista y el editor de perfiles.

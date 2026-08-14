@@ -9,12 +9,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.NotificationsActive
-import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.PauseCircle
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,14 +39,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sonoritmo.core.domain.model.ActivationSource
+import com.sonoritmo.core.domain.model.AudioStream
 import com.sonoritmo.core.domain.model.ProfileTemplate
-import com.sonoritmo.core.domain.model.RingerMode
 import com.sonoritmo.core.ui.component.ActiveStateBanner
 import com.sonoritmo.core.ui.component.ActiveStateKind
 import com.sonoritmo.core.ui.component.EmptyState
 import com.sonoritmo.core.ui.component.ProfileCard
 import com.sonoritmo.core.ui.component.ScheduleSummary
 import com.sonoritmo.core.ui.component.VolumeBadge
+import com.sonoritmo.core.ui.component.VolumeState
 import com.sonoritmo.core.ui.format.ScheduleFormatter
 import com.sonoritmo.feature.profiles.R
 import java.time.Instant
@@ -318,35 +316,28 @@ private fun ProfileRowItem(
     var menuOpen by remember { mutableStateOf(false) }
     val profile = row.profile
 
-    val volumes = buildList {
-        profile.ringerMode?.let { mode ->
-            add(
-                VolumeBadge(
-                    icon = ringerIcon(mode),
-                    text = ScheduleFormatter.ringerLabel(mode),
-                    contentDescription = ScheduleFormatter.ringerLabel(mode),
-                ),
-            )
-        }
-        profile.volumes.requested().forEach { (stream, percent) ->
-            val streamLabel = ScheduleFormatter.streamLabel(stream)
-            add(
-                VolumeBadge(
-                    icon = ScheduleFormatter.streamIcon(stream),
-                    text = ScheduleFormatter.volumeLabel(percent),
-                    contentDescription = stringResource(
-                        R.string.editor_volume_of,
-                        streamLabel,
-                        ScheduleFormatter.volumeLabel(percent),
-                    ),
-                ),
-            )
-        }
+    // Every writable stream, in the model's own order, so the row reads the same on every
+    // card and a missing icon can only ever mean the stream does not exist.
+    val volumes = AudioStream.WRITABLE.map { stream ->
+        val percent = profile.volumes[stream]
+        VolumeBadge(
+            icon = ScheduleFormatter.streamIcon(stream),
+            state = when {
+                percent == null -> VolumeState.UNCHANGED
+                percent == 0 -> VolumeState.SILENCED
+                else -> VolumeState.SET
+            },
+            contentDescription = stringResource(
+                R.string.editor_volume_of,
+                ScheduleFormatter.streamLabel(stream),
+                ScheduleFormatter.volumeLabel(percent),
+            ),
+        )
     }
 
     val schedules = row.schedules.map { schedule ->
         ScheduleSummary(
-            days = ScheduleFormatter.days(schedule.daysMask),
+            daysMask = schedule.daysMask,
             range = ScheduleFormatter.range(schedule),
         )
     }
@@ -410,12 +401,6 @@ private fun ProfileRowItem(
     )
 }
 
-@Composable
-private fun ringerIcon(mode: RingerMode) = when (mode) {
-    RingerMode.NORMAL -> Icons.Filled.NotificationsActive
-    RingerMode.VIBRATE -> Icons.Filled.Vibration
-    RingerMode.SILENT -> Icons.Filled.NotificationsOff
-}
 
 @Composable
 internal fun templateLabel(template: ProfileTemplate): String = stringResource(

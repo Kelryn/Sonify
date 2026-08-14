@@ -28,10 +28,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/** Device facts the editor needs so the sliders match what the phone can actually do. */
+/**
+ * Device facts the editor needs.
+ *
+ * The device's step count used to live here to notch the slider; the slider is continuous
+ * now, so carrying the number around would be state nothing reads — the exact thing that
+ * made the editor unusable in 1.0.
+ */
 data class StreamCapability(
     val stream: AudioStream,
-    val steps: Int,
     val supported: Boolean,
 )
 
@@ -86,10 +91,8 @@ class ProfileEditorViewModel @Inject constructor(
     private suspend fun load() {
         val volumeFixed = capabilitiesSource.isVolumeFixed()
         val capabilities = AudioStream.entries.map { stream ->
-            val level = capabilitiesSource.levelOf(stream)
             StreamCapability(
                 stream = stream,
-                steps = (level.maxSteps - level.minSteps + 1).coerceAtLeast(1),
                 supported = capabilitiesSource.isWritable(stream) && !volumeFixed,
             )
         }

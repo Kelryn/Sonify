@@ -130,6 +130,8 @@ fun ProfileEditorScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
 
+            IconSection(profile.emoji, viewModel::onEmojiChange)
+
             VolumesSection(profile, state.capabilities, state.ringNotificationCoupled, viewModel)
             RingerSection(profile, viewModel)
             DndSection(profile, viewModel)
@@ -232,7 +234,6 @@ private fun VolumesSection(
             label = label,
             icon = ScheduleFormatter.streamIcon(stream),
             percent = percent,
-            steps = capability.steps,
             isSupported = capability.supported,
             // Accessibility is listed and explained rather than hidden: silently dropping a
             // stream would look like a bug, and saying why is the honest version.
@@ -247,10 +248,53 @@ private fun VolumesSection(
                 label,
                 ScheduleFormatter.volumeLabel(percent),
             ),
-            valueLabel = ScheduleFormatter.volumeLabel(percent),
+            valueLabel = ScheduleFormatter.volumeValueLabel(percent),
             onPercentChange = { viewModel.onVolumeChange(stream, it) },
             onEnabledChange = { viewModel.onVolumeEnabledChange(stream, it) },
         )
+    }
+}
+
+/**
+ * The catalogue of profile icons.
+ *
+ * These live in code rather than in `strings.xml` on purpose: they are emoji, not text.
+ * Nothing here needs translating, and a translator handed a list of pictograms would have
+ * nothing to do but risk breaking them.
+ */
+private val ICON_CATALOGUE = listOf(
+    "🌙", "☀️", "🛏️", "💼", "🏢", "📚", "🎧", "🎬",
+    "🚗", "✈️", "🏃", "🏋️", "🍽️", "☕", "🎮", "🎉",
+    "🤫", "🔕", "🔔", "⏰", "🏡", "❤️", "⭐", "🧘",
+)
+
+/**
+ * Picking the icon was possible in the ViewModel and impossible on screen: `onEmojiChange`
+ * existed with nothing calling it, so every profile kept the first letter of its name.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun IconSection(current: String?, onEmojiChange: (String?) -> Unit) {
+    SectionHeader(stringResource(R.string.editor_section_icon))
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        // "None" first, and selectable: falling back to the initial of the name is a valid
+        // choice, not an absence of one.
+        FilterChip(
+            selected = current == null,
+            onClick = { onEmojiChange(null) },
+            label = { Text(stringResource(R.string.editor_icon_none)) },
+        )
+        ICON_CATALOGUE.forEach { emoji ->
+            FilterChip(
+                selected = current == emoji,
+                onClick = { onEmojiChange(emoji) },
+                label = { Text(text = emoji, style = MaterialTheme.typography.titleMedium) },
+            )
+        }
     }
 }
 

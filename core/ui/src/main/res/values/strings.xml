@@ -6,7 +6,6 @@
     <string name="ui_day_separator">", "</string>
     <string name="ui_schedule_range">%1$s – %2$s</string>
     <string name="ui_schedule_full">%1$s · %2$s</string>
-    <string name="ui_schedule_crosses_midnight">%1$s (next day)</string>
     <string name="ui_duration_hours_minutes">%1$d h %2$d min</string>
     <string name="ui_duration_hours">%1$d h</string>
     <string name="ui_duration_minutes">%1$d min</string>
@@ -22,4 +21,5 @@
     <string name="ui_ringer_silent">Silent</string>
     <string name="ui_volume_percent">%1$d%%</string>
     <string name="ui_volume_untouched">Unchanged</string>
+    <string name="ui_volume_na">NA</string>
 </resources>

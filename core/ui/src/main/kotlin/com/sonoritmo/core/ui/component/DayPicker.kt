@@ -3,9 +3,11 @@ package com.sonoritmo.core.ui.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -15,14 +17,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sonoritmo.core.domain.model.DayMask
 import java.time.DayOfWeek
-import java.time.format.TextStyle
+// Aliased because Compose's TextStyle is the one this file uses for typography, and two
+// unrelated types called TextStyle in one file is a trap for whoever edits it next.
+import java.time.format.TextStyle as DayNameStyle
 import java.util.Locale
 
 /**
@@ -46,28 +53,21 @@ fun DayPicker(
 
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.spacedBy(DAY_GAP),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         orderedDays.forEach { day ->
             val selected = DayMask.has(daysMask, day)
-            val fullName = day.getDisplayName(TextStyle.FULL_STANDALONE, locale)
-            val short = day.getDisplayName(TextStyle.NARROW_STANDALONE, locale)
+            val fullName = day.getDisplayName(DayNameStyle.FULL_STANDALONE, locale)
 
-            Surface(
-                shape = CircleShape,
-                color = if (selected) {
-                    MaterialTheme.colorScheme.primaryContainer
-                } else {
-                    MaterialTheme.colorScheme.surfaceVariant
-                },
-                contentColor = if (selected) {
-                    MaterialTheme.colorScheme.onPrimaryContainer
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                },
+            // Seven fixed 48 dp circles need 336 dp, which is more than a 360 dp phone has
+            // left after the screen's own margins, so the last one got squeezed. Equal
+            // weights make all seven the same size whatever the width, and the touch target
+            // keeps its 48 dp height even when the circle drawn inside is smaller.
+            Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .weight(1f)
+                    .heightIn(min = 48.dp)
                     .toggleable(
                         value = selected,
                         role = Role.Checkbox,
@@ -79,21 +79,101 @@ fun DayPicker(
                         },
                     )
                     .semantics { contentDescription = fullName },
+                contentAlignment = Alignment.Center,
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = short.uppercase(locale),
-                        style = MaterialTheme.typography.titleMedium,
-                        textAlign = TextAlign.Center,
-                    )
-                }
+                DayCircle(
+                    letter = day.getDisplayName(DayNameStyle.NARROW_STANDALONE, locale).uppercase(locale),
+                    container = if (selected) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant
+                    },
+                    content = if (selected) {
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                    style = MaterialTheme.typography.titleMedium,
+                )
             }
         }
     }
 }
+
+/**
+ * The same seven circles, read-only, for a list row.
+ *
+ * Sharing [DayCircle] with the editor is the point: two renderings of the same week that
+ * drift apart is how a list ends up disagreeing with the screen that wrote it.
+ */
+@Composable
+fun DayDots(
+    daysMask: Int,
+    modifier: Modifier = Modifier,
+    locale: Locale = Locale.getDefault(),
+) {
+    val orderedDays = remember(locale) { weekOrder(locale) }
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(DAY_GAP),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        orderedDays.forEach { day ->
+            val selected = DayMask.has(daysMask, day)
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics {
+                        contentDescription = day.getDisplayName(DayNameStyle.FULL_STANDALONE, locale)
+                    },
+                contentAlignment = Alignment.Center,
+            ) {
+                DayCircle(
+                    letter = day.getDisplayName(DayNameStyle.NARROW_STANDALONE, locale).uppercase(locale),
+                    container = if (selected) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant
+                    },
+                    content = if (selected) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = INACTIVE_ALPHA)
+                    },
+                    style = MaterialTheme.typography.labelSmall,
+                    maxDiameter = 24.dp,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DayCircle(
+    letter: String,
+    container: Color,
+    content: Color,
+    style: TextStyle,
+    maxDiameter: Dp = 48.dp,
+) {
+    Surface(
+        shape = CircleShape,
+        color = container,
+        contentColor = content,
+        modifier = Modifier
+            .fillMaxWidth()
+            .sizeIn(maxWidth = maxDiameter, maxHeight = maxDiameter)
+            .aspectRatio(1f),
+    ) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text(text = letter, style = style, textAlign = TextAlign.Center, maxLines = 1)
+        }
+    }
+}
+
+private val DAY_GAP = 4.dp
+private const val INACTIVE_ALPHA = 0.45f
 
 private fun weekOrder(locale: Locale): List<DayOfWeek> {
     val first = java.time.temporal.WeekFields.of(locale).firstDayOfWeek

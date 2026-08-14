@@ -89,6 +89,8 @@
     <string name="editor_title_new">New profile</string>
     <string name="editor_title_edit">Edit profile</string>
     <string name="editor_name">Name</string>
+    <string name="editor_section_icon">Icon</string>
+    <string name="editor_icon_none">Initial</string>
     <string name="editor_section_volumes">Volumes</string>
     <string name="editor_section_ringer">Ringer</string>
     <string name="editor_section_dnd">Do Not Disturb</string>
