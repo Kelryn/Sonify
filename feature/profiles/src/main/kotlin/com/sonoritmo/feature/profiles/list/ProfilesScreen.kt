@@ -9,9 +9,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.PauseCircle
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,10 +43,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sonoritmo.core.domain.model.ActivationSource
 import com.sonoritmo.core.domain.model.ProfileTemplate
+import com.sonoritmo.core.domain.model.RingerMode
 import com.sonoritmo.core.ui.component.ActiveStateBanner
 import com.sonoritmo.core.ui.component.ActiveStateKind
 import com.sonoritmo.core.ui.component.EmptyState
 import com.sonoritmo.core.ui.component.ProfileCard
+import com.sonoritmo.core.ui.component.ScheduleSummary
+import com.sonoritmo.core.ui.component.VolumeBadge
 import com.sonoritmo.core.ui.format.ScheduleFormatter
 import com.sonoritmo.feature.profiles.R
 import java.time.Instant
@@ -121,6 +127,7 @@ fun ProfilesScreen(
             StatusBanner(
                 status = state.status,
                 onResume = { viewModel.onEvent(ProfilesEvent.ResumeAll) },
+                onDeactivate = { viewModel.onEvent(ProfilesEvent.Deactivate) },
                 onFix = onOpenDiagnostics,
             )
 
@@ -144,6 +151,7 @@ fun ProfilesScreen(
                             onActivate = { viewModel.onEvent(ProfilesEvent.Activate(row.profile.uuid)) },
                             onEdit = { onEditProfile(row.profile.uuid) },
                             onActivateFor = { durationSheetFor = row.profile.uuid },
+                            onDeactivate = { viewModel.onEvent(ProfilesEvent.Deactivate) },
                             onDuplicate = { viewModel.onEvent(ProfilesEvent.Duplicate(row.profile.uuid)) },
                             onDelete = { viewModel.onEvent(ProfilesEvent.Delete(row.profile.uuid)) },
                             onToggleEnabled = {
@@ -215,6 +223,7 @@ fun ProfilesScreen(
 private fun StatusBanner(
     status: ActiveStatus,
     onResume: () -> Unit,
+    onDeactivate: () -> Unit,
     onFix: () -> Unit,
 ) {
     when (status) {
@@ -234,6 +243,15 @@ private fun StatusBanner(
                 reason = reason,
                 nextUp = next,
                 semanticSummary = stringResource(R.string.banner_summary_active, status.profile.name, next),
+                // Only a manual activation can be undone: a scheduled one would come
+                // straight back on the next reconciliation, so offering the button there
+                // would promise something the scheduler is about to overrule.
+                actionLabel = if (status.source == ActivationSource.MANUAL) {
+                    stringResource(R.string.profile_deactivate)
+                } else {
+                    null
+                },
+                onAction = onDeactivate,
             )
         }
 
@@ -292,6 +310,7 @@ private fun ProfileRowItem(
     onActivate: () -> Unit,
     onEdit: () -> Unit,
     onActivateFor: () -> Unit,
+    onDeactivate: () -> Unit,
     onDuplicate: () -> Unit,
     onDelete: () -> Unit,
     onToggleEnabled: () -> Unit,
@@ -299,22 +318,38 @@ private fun ProfileRowItem(
     var menuOpen by remember { mutableStateOf(false) }
     val profile = row.profile
 
-    val summary = buildList {
-        profile.ringerMode?.let { add(ScheduleFormatter.ringerLabel(it)) }
-        profile.volumes.requested().take(2).forEach { (stream, percent) ->
+    val volumes = buildList {
+        profile.ringerMode?.let { mode ->
             add(
-                stringResource(
-                    R.string.editor_volume_of,
-                    ScheduleFormatter.streamLabel(stream),
-                    ScheduleFormatter.volumeLabel(percent),
+                VolumeBadge(
+                    icon = ringerIcon(mode),
+                    text = ScheduleFormatter.ringerLabel(mode),
+                    contentDescription = ScheduleFormatter.ringerLabel(mode),
                 ),
             )
         }
-    }.joinToString(" · ")
+        profile.volumes.requested().forEach { (stream, percent) ->
+            val streamLabel = ScheduleFormatter.streamLabel(stream)
+            add(
+                VolumeBadge(
+                    icon = ScheduleFormatter.streamIcon(stream),
+                    text = ScheduleFormatter.volumeLabel(percent),
+                    contentDescription = stringResource(
+                        R.string.editor_volume_of,
+                        streamLabel,
+                        ScheduleFormatter.volumeLabel(percent),
+                    ),
+                ),
+            )
+        }
+    }
 
-    val scheduleSummary = row.schedules.firstOrNull()
-        ?.let { ScheduleFormatter.full(it) }
-        ?: stringResource(R.string.profile_no_schedule)
+    val schedules = row.schedules.map { schedule ->
+        ScheduleSummary(
+            days = ScheduleFormatter.days(schedule.daysMask),
+            range = ScheduleFormatter.range(schedule),
+        )
+    }
 
     val stateDescription = when {
         !profile.enabled -> stringResource(R.string.profile_state_disabled)
@@ -325,8 +360,9 @@ private fun ProfileRowItem(
     ProfileCard(
         name = profile.name,
         emoji = profile.emoji,
-        summary = summary,
-        scheduleSummary = scheduleSummary,
+        volumes = volumes,
+        schedules = schedules,
+        noScheduleLabel = stringResource(R.string.profile_no_schedule),
         isActive = row.isActive,
         isEnabled = profile.enabled,
         accentColor = Color(profile.colorSeed),
@@ -337,32 +373,48 @@ private fun ProfileRowItem(
         onActivate = onActivate,
         onEdit = onEdit,
         onMore = { menuOpen = true },
-    )
-
-    DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.profile_activate_for)) },
-            onClick = { menuOpen = false; onActivateFor() },
-        )
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.profile_duplicate)) },
-            onClick = { menuOpen = false; onDuplicate() },
-        )
-        DropdownMenuItem(
-            text = {
-                Text(
-                    stringResource(
-                        if (profile.enabled) R.string.profile_disable else R.string.profile_enable,
-                    ),
+        overflowMenu = {
+            DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.profile_activate_for)) },
+                    onClick = { menuOpen = false; onActivateFor() },
                 )
-            },
-            onClick = { menuOpen = false; onToggleEnabled() },
-        )
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.profile_delete)) },
-            onClick = { menuOpen = false; onDelete() },
-        )
-    }
+                // Only on the profile that is actually on. "Until I turn it off" was
+                // offered with nothing anywhere in the app that turned it off.
+                if (row.isActive) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.profile_deactivate)) },
+                        onClick = { menuOpen = false; onDeactivate() },
+                    )
+                }
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.profile_duplicate)) },
+                    onClick = { menuOpen = false; onDuplicate() },
+                )
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            stringResource(
+                                if (profile.enabled) R.string.profile_disable else R.string.profile_enable,
+                            ),
+                        )
+                    },
+                    onClick = { menuOpen = false; onToggleEnabled() },
+                )
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.profile_delete)) },
+                    onClick = { menuOpen = false; onDelete() },
+                )
+            }
+        },
+    )
+}
+
+@Composable
+private fun ringerIcon(mode: RingerMode) = when (mode) {
+    RingerMode.NORMAL -> Icons.Filled.NotificationsActive
+    RingerMode.VIBRATE -> Icons.Filled.Vibration
+    RingerMode.SILENT -> Icons.Filled.NotificationsOff
 }
 
 @Composable

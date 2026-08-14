@@ -4,12 +4,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,8 +37,19 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+
+/** One stream's setting, reduced to the icon and the number. */
+data class VolumeBadge(
+    val icon: ImageVector,
+    val text: String,
+    val contentDescription: String,
+)
+
+/** One window, split so the days and the hours can sit on their own lines. */
+data class ScheduleSummary(val days: String, val range: String)
 
 /**
  * One profile in the list.
@@ -51,12 +65,14 @@ import androidx.compose.ui.unit.dp
  * @param isActive drives both the container colour **and** the state description, so the
  *   active profile is obvious visually and unmistakable under TalkBack.
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ProfileCard(
     name: String,
     emoji: String?,
-    summary: String,
-    scheduleSummary: String?,
+    volumes: List<VolumeBadge>,
+    schedules: List<ScheduleSummary>,
+    noScheduleLabel: String,
     isActive: Boolean,
     isEnabled: Boolean,
     accentColor: Color,
@@ -68,6 +84,12 @@ fun ProfileCard(
     onEdit: () -> Unit,
     onMore: () -> Unit,
     modifier: Modifier = Modifier,
+    /**
+     * Rendered in the same [Box] as the overflow button, which is what makes a menu placed
+     * here open beside it. A menu declared as a sibling of the whole card anchors to the
+     * card's top-left corner instead, several centimetres from the button that opened it.
+     */
+    overflowMenu: @Composable () -> Unit = {},
 ) {
     Card(
         modifier = modifier
@@ -90,7 +112,9 @@ fun ProfileCard(
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            // Top, not centre: the detail column grows with the number of windows, and
+            // centring would drift the avatar and the buttons down away from the name.
+            verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Box(
@@ -103,28 +127,69 @@ fun ProfileCard(
                 Text(text = emoji ?: name.take(1).uppercase(), style = MaterialTheme.typography.titleMedium)
             }
 
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
                 Text(
                     text = name,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                Text(
-                    text = summary,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                if (!scheduleSummary.isNullOrBlank()) {
+
+                // Icons rather than a sentence. A written summary of six streams, a ringer
+                // mode and a window does not fit next to two buttons in any language, and
+                // truncating it hid exactly the part that distinguishes two profiles.
+                if (volumes.isNotEmpty()) {
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        volumes.forEach { badge ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(3.dp),
+                                modifier = Modifier.semantics {
+                                    contentDescription = badge.contentDescription
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = badge.icon,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                                Text(
+                                    text = badge.text,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // No maxLines and no ellipsis anywhere below: the hours are the reason
+                // someone opens this screen, and half an hour is worse than none.
+                if (schedules.isEmpty()) {
                     Text(
-                        text = scheduleSummary,
+                        text = noScheduleLabel,
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
                     )
+                } else {
+                    schedules.forEach { schedule ->
+                        Text(
+                            text = schedule.days,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Text(
+                            text = schedule.range,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
                 }
             }
 
@@ -132,8 +197,14 @@ fun ProfileCard(
             IconButton(onClick = onEdit, modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp)) {
                 Icon(Icons.Filled.Edit, contentDescription = editContentDescription)
             }
-            IconButton(onClick = onMore, modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp)) {
-                Icon(Icons.Filled.MoreVert, contentDescription = moreContentDescription)
+            Box {
+                IconButton(
+                    onClick = onMore,
+                    modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp),
+                ) {
+                    Icon(Icons.Filled.MoreVert, contentDescription = moreContentDescription)
+                }
+                overflowMenu()
             }
         }
     }
@@ -158,6 +229,8 @@ fun VolumeSliderRow(
     steps: Int,
     enabledSwitchDescription: String,
     valueDescription: String,
+    /** Just the number, shown beside the track. [valueDescription] is the spoken version. */
+    valueLabel: String,
     supportingText: String? = null,
     isSupported: Boolean = true,
     onPercentChange: (Int) -> Unit,
@@ -198,16 +271,35 @@ fun VolumeSliderRow(
             )
         }
 
-        if (enabled) {
+        // The track is always laid out, greyed when the stream is left alone, and the
+        // number always occupies the same width. Showing it only for the streams that are
+        // switched on gave every row a different height and left the tracks starting and
+        // ending at different places down the column.
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
             Slider(
                 value = (percent ?: 0).toFloat(),
                 onValueChange = { onPercentChange(it.toInt()) },
                 valueRange = 0f..100f,
+                enabled = enabled,
                 // One notch per real device step, so the thumb lands where the phone can go.
                 steps = (steps - 1).coerceAtLeast(0),
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .weight(1f)
                     .semantics { contentDescription = valueDescription },
+            )
+            Text(
+                text = valueLabel,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.End,
+                maxLines = 1,
+                // A fixed width, so that 5 %, 50 % and 100 % all end on the same column
+                // instead of shunting the track around as the thumb moves.
+                modifier = Modifier.widthIn(min = 52.dp),
             )
         }
     }

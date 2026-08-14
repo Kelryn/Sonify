@@ -38,6 +38,7 @@
     <string name="profile_disable">Disable</string>
     <string name="profile_enable">Enable</string>
     <string name="profile_activate_for">Activate for…</string>
+    <string name="profile_deactivate">Turn off</string>
 
     <string name="duration_30_min">30 minutes</string>
     <string name="duration_1_hour">1 hour</string>

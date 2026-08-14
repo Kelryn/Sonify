@@ -247,6 +247,7 @@ private fun VolumesSection(
                 label,
                 ScheduleFormatter.volumeLabel(percent),
             ),
+            valueLabel = ScheduleFormatter.volumeLabel(percent),
             onPercentChange = { viewModel.onVolumeChange(stream, it) },
             onEnabledChange = { viewModel.onVolumeEnabledChange(stream, it) },
         )

@@ -2,6 +2,34 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.3.0] — 2026-08-14
+
+Segunda tanda de correcciones de uso real, toda en la lista y el editor de perfiles.
+
+### Añadido
+
+- **Desactivar un perfil activado a mano.** «Hasta que lo quite» se ofrecía sin que existiera
+  en ninguna parte de la app la forma de quitarlo. Aparece en el aviso de estado y en el menú
+  del perfil activo, y solo cuando la activación es manual: una programada volvería sola en
+  la siguiente reconciliación.
+- **Porcentaje a la derecha de cada barra de volumen**, con ancho fijo para que 5 %, 50 % y
+  100 % terminen en la misma columna.
+
+### Cambiado
+
+- **La descripción de cada perfil pasa a ser iconos.** Antes era una frase que no cabía y se
+  cortaba justo en la parte que distingue un perfil de otro. Ahora: un icono con su
+  porcentaje por cada volumen y por el modo de timbre, debajo los días activos y debajo el
+  horario, sin recortar y con todas las franjas, no solo la primera.
+
+### Corregido
+
+- El menú de los tres puntos se abría en la esquina superior izquierda de la tarjeta en vez
+  de junto al botón, y con él se cortaba el texto de «Activar durante…».
+- Las barras de volumen solo se dibujaban en los streams activados, así que cada fila tenía
+  una altura distinta y las barras no quedaban alineadas entre sí. Ahora la barra está
+  siempre, atenuada cuando el stream se deja como está.
+
 ## [1.2.0] — 2026-08-14
 
 Correcciones de la primera revisión de la app en uso real.
