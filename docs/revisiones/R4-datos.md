@@ -2,7 +2,7 @@ He leído ambos documentos. El repositorio solo contiene `docs/`, así que no ha
 
 ---
 
-# Informe de la capa de persistencia y datos — SonoRitmo
+# Informe de la capa de persistencia y datos — RitMute
 
 ## Veredicto general
 
@@ -642,7 +642,7 @@ Y la base:
     exportSchema = true,
 )
 @TypeConverters(RoomConverters::class)
-abstract class SonoRitmoDatabase : RoomDatabase() {
+abstract class RitMuteDatabase : RoomDatabase() {
     abstract fun profileDao(): ProfileDao
     abstract fun scheduleDao(): ScheduleDao
     abstract fun activityLogDao(): ActivityLogDao
@@ -927,7 +927,7 @@ Decisiones de forma, y por qué:
   "formatVersion": 1,
   "exportedAt": "2026-08-12T21:14:03Z",
   "generator": {
-    "app": "SonoRitmo",
+    "app": "RitMute",
     "versionName": "1.0.0",
     "versionCode": 100
   },
@@ -1101,7 +1101,7 @@ Detalles que merecen comentario:
 
 Reglas duras:
 
-1. **`formatVersion` mayor que el soportado ⇒ rechazo explícito** con `UnsupportedVersion`, y mensaje al usuario del tipo "este fichero se creó con una versión más reciente de SonoRitmo". Nunca intentar leerlo "a ver si cuela".
+1. **`formatVersion` mayor que el soportado ⇒ rechazo explícito** con `UnsupportedVersion`, y mensaje al usuario del tipo "este fichero se creó con una versión más reciente de RitMute". Nunca intentar leerlo "a ver si cuela".
 2. **`formatVersion` menor ⇒ siempre se acepta**, pasando por una cadena de transformaciones sobre `JsonObject` **antes** de decodificar a DTO. Nunca se mantienen DTOs de versiones antiguas.
 
 ```kotlin
@@ -1216,7 +1216,7 @@ Cuatro niveles, todos obligatorios en CI:
 class MigrationTest {
     @get:Rule val helper = MigrationTestHelper(
         InstrumentationRegistry.getInstrumentation(),
-        SonoRitmoDatabase::class.java,
+        RitMuteDatabase::class.java,
         emptyList(),
         FrameworkSQLiteOpenHelperFactory(),
     )
@@ -1244,7 +1244,7 @@ class MigrationTest {
     // 3. Recorrido completo: instalación de v1 que salta directamente a la última.
     @Test fun migrateAll_fromV1ToLatest() {
         helper.createDatabase(TEST_DB, 1).use { seedRealisticV1Data(it) }
-        Room.databaseBuilder(context, SonoRitmoDatabase::class.java, TEST_DB)
+        Room.databaseBuilder(context, RitMuteDatabase::class.java, TEST_DB)
             .addMigrations(*ALL_MIGRATIONS)
             .build().apply { openHelper.writableDatabase; close() }
     }
@@ -1252,7 +1252,7 @@ class MigrationTest {
     // 4. Cobertura: ninguna versión sin migración.
     @Test fun everyVersionHasAMigration() {
         val versions = ALL_MIGRATIONS.map { it.startVersion to it.endVersion }.toSet()
-        (1 until SonoRitmoDatabase.VERSION).forEach { v ->
+        (1 until RitMuteDatabase.VERSION).forEach { v ->
             assertThat(versions).contains(v to v + 1)
         }
     }

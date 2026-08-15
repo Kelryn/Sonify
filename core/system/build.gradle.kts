@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.sonoritmo.core.system"
+    namespace = "com.ritmute.core.system"
     compileSdk = 36
 
     defaultConfig {

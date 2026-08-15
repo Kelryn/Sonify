@@ -2,7 +2,7 @@
 <resources>
     <string name="history_title">Activity</string>
     <string name="history_empty_title">Nothing has happened yet</string>
-    <string name="history_empty_body">Every change SonoRitmo makes to your sound is recorded here, with the rule that caused it.</string>
+    <string name="history_empty_body">Every change RitMute makes to your sound is recorded here, with the rule that caused it.</string>
     <string name="history_filter_all">All</string>
     <string name="history_filter_failures">Problems only</string>
     <string name="history_success">Applied</string>
@@ -30,7 +30,7 @@
     <string name="reason_volume_fixed">This device has a fixed volume</string>
     <string name="reason_zen_limit">Too many system modes</string>
     <string name="reason_zen_overridden">Another mode is overriding ours</string>
-    <string name="reason_force_stop">Your phone stopped SonoRitmo</string>
+    <string name="reason_force_stop">Your phone stopped RitMute</string>
     <string name="reason_import">Configuration imported</string>
     <string name="reason_unchanged">Nothing to change</string>
 
@@ -49,7 +49,7 @@
     <string name="diagnostics_alarm_missing">No change is scheduled</string>
     <string name="diagnostics_repairs">Times the watchdog fixed things: %1$d</string>
     <string name="diagnostics_volume_fixed">This device has a fixed output level; volume changes do nothing.</string>
-    <string name="diagnostics_force_stop">Your phone force-stopped SonoRitmo. Between then and the moment you opened it, no rule ran.</string>
+    <string name="diagnostics_force_stop">Your phone force-stopped RitMute. Between then and the moment you opened it, no rule ran.</string>
     <string name="diagnostics_vendor">Your phone (%1$s) is known to stop background apps aggressively.</string>
     <string name="diagnostics_grant">Grant</string>
     <string name="diagnostics_open_settings">Open settings</string>

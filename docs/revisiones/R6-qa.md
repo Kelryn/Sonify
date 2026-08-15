@@ -2,7 +2,7 @@ I have verified the environment empirically. Here is the report.
 
 ---
 
-# Informe de QA y Estrategia de Calidad — SonoRitmo v1.0
+# Informe de QA y Estrategia de Calidad — RitMute v1.0
 
 **Responsable:** QA y Calidad de Sistemas
 **Fecha:** 12 de agosto de 2026

@@ -49,7 +49,7 @@
     </queries>
 
     <application
-        android:name=".SonoRitmoApplication"
+        android:name=".RitMuteApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -58,21 +58,21 @@
         android:localeConfig="@xml/locales_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SonoRitmo"
+        android:theme="@style/Theme.RitMute"
         tools:targetApi="34">
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.SonoRitmo">
+            android:theme="@style/Theme.RitMute">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
             <!--
-              Deep links use the sonoritmo:// scheme rather than https://. An http scheme
+              Deep links use the ritmute:// scheme rather than https://. An http scheme
               in an app that declares no INTERNET permission would raise a fair question
               about what it is talking to.
             -->
@@ -80,7 +80,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="sonoritmo" />
+                <data android:scheme="ritmute" />
             </intent-filter>
         </activity>
 
@@ -110,7 +110,7 @@
           — so the service type is load-bearing, not ceremonial.
         -->
         <service
-            android:name="com.sonoritmo.core.system.service.ApplyProfileService"
+            android:name="com.ritmute.core.system.service.ApplyProfileService"
             android:exported="false"
             android:foregroundServiceType="specialUse">
             <property
@@ -130,7 +130,7 @@
                   scheduled transition is silently lost, which is the single worst bug
                   this app could ship.
                 -->
-                <action android:name="com.sonoritmo.action.RECONCILE" />
+                <action android:name="com.ritmute.action.RECONCILE" />
             </intent-filter>
         </receiver>
 
@@ -186,9 +186,9 @@
           now that ACTION_USER_PRESENT cannot be declared in a manifest.
         -->
         <service
-            android:name=".tile.SonoRitmoTileService"
+            android:name=".tile.RitMuteTileService"
             android:exported="true"
-            android:icon="@drawable/ic_tile_sonoritmo"
+            android:icon="@drawable/ic_tile_ritmute"
             android:label="@string/tile_label"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
@@ -205,7 +205,7 @@
           reliability feature before it is a convenience one.
         -->
         <receiver
-            android:name=".widget.SonoRitmoWidgetReceiver"
+            android:name=".widget.RitMuteWidgetReceiver"
             android:exported="false"
             android:label="@string/app_name">
             <intent-filter>
@@ -213,7 +213,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/sonoritmo_widget_info" />
+                android:resource="@xml/ritmute_widget_info" />
         </receiver>
 
         <provider

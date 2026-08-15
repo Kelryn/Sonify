@@ -1,6 +1,6 @@
 # 03 — Plan de desarrollo
 
-**Proyecto:** SonoRitmo
+**Proyecto:** RitMute
 **Fecha:** 12 de agosto de 2026
 **Entradas:** `01-ESPECIFICACIONES.md` (enmendado por `02-REVISION-EQUIPO.md`)
 **Estado:** aprobado por los seis roles del equipo
@@ -184,7 +184,7 @@ De ahí el `ActiveStateBanner` persistente como elemento identitario.
 
 - Jerarquía de 2 niveles máximo.
 - Estado de permisos reevaluado en `ON_RESUME` (las pantallas del sistema no devuelven resultado).
-- Deep links `sonoritmo://` (nunca `http`, coherente con la ausencia de `INTERNET`).
+- Deep links `ritmute://` (nunca `http`, coherente con la ausencia de `INTERNET`).
 - `rememberSaveable` + `SavedStateHandle` para sobrevivir a la muerte del proceso mientras el usuario está en los ajustes del sistema.
 - Cero cadenas embebidas en código; español e inglés completos; `locales_config.xml`.
 

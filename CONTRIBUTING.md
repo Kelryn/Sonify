@@ -1,4 +1,4 @@
-# Contribuir a SonoRitmo
+# Contribuir a RitMute
 
 Gracias por el interés. Unas pocas reglas, todas con motivo.
 

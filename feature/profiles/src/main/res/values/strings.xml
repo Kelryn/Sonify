@@ -118,7 +118,7 @@
     <string name="editor_dnd_total">Total silence</string>
     <string name="editor_dnd_calls">Allow calls from</string>
     <string name="editor_dnd_repeat">Allow repeat callers</string>
-    <string name="editor_dnd_note">SonoRitmo can turn Do Not Disturb on, but Android does not let any app turn off a mode someone else switched on.</string>
+    <string name="editor_dnd_note">RitMute can turn Do Not Disturb on, but Android does not let any app turn off a mode someone else switched on.</string>
     <string name="editor_volume_of">%1$s at %2$s</string>
     <string name="editor_volume_toggle">Control %1$s</string>
 

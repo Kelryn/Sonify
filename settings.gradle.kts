@@ -20,7 +20,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SonoRitmo"
+rootProject.name = "RitMute"
 
 include(":app")
 include(":core:domain")

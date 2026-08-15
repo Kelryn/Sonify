@@ -1,11 +1,11 @@
-# SonoRitmo
+# RitMute
 
 **Tu móvil suena como debe, cuando debe.**
 
 Gestor de perfiles de sonido para Android: define estados de audio completos —los seis
 streams, el modo de timbre y No molestar— y deja que se apliquen solos, a su hora, siempre.
 
-[![CI](https://github.com/OWNER/sonoritmo/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/sonoritmo/actions/workflows/ci.yml)
+[![CI](https://github.com/OWNER/ritmute/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/ritmute/actions/workflows/ci.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
 ---
@@ -23,11 +23,11 @@ tiene 50 000 instalaciones y 3,5 ★, y sus reseñas se quejan de lo mismo una y
 El problema de esta categoría **no es que falten funciones**. Es que las que hay no se
 disparan. Ninguna trata la programación exacta como un problema serio de ingeniería.
 
-SonoRitmo lo hace.
+RitMute lo hace.
 
 ## Qué hace diferente
 
-| | Lo habitual en la categoría | SonoRitmo |
+| | Lo habitual en la categoría | RitMute |
 |---|---|---|
 | **Fiabilidad** | Una alarma por regla, sin recuperación | Una sola alarma para la siguiente transición, reconciliación en cada arranque, vigilante horario, recuperación antes del desbloqueo tras reiniciar |
 | **Franjas** | «A las 23:00 pon silencio» y otra regla para volver | Franjas reales con inicio y fin, cruce de medianoche y restauración automática del estado anterior |
@@ -48,7 +48,7 @@ con `kotlinc` y sin un emulador delante.
 
 ```
 $ java -jar selfcheck.jar
-SonoRitmo :core:domain self-check
+RitMute :core:domain self-check
   checks run : 107
   failures   : 0
   OK
@@ -97,7 +97,7 @@ necesita se han ido cerrando entre 2024 y 2026. En lugar de fingir que no ha pas
   su explicación, en vez de desaparecer como si fuera un olvido.
 - **No hay volumen por aplicación.** No existe API pública. Está declarado como no objetivo.
 - **Contra un *force stop* no hay defensa técnica.** Lo que sí hay es detectarlo y decírtelo:
-  «tu móvil detuvo SonoRitmo; entre X e Y no se aplicó ninguna regla».
+  «tu móvil detuvo RitMute; entre X e Y no se aplicó ninguna regla».
 
 ## Permisos
 
@@ -116,8 +116,8 @@ Y no: `INTERNET`, `READ_PHONE_STATE`, `WRITE_SETTINGS`, `USE_EXACT_ALARM`,
 ## Compilar
 
 ```bash
-git clone https://github.com/OWNER/sonoritmo.git
-cd sonoritmo
+git clone https://github.com/OWNER/ritmute.git
+cd ritmute
 ./gradlew assembleDebug
 ```
 

@@ -1,6 +1,6 @@
 # 01 — Requisitos y especificaciones
 
-**Proyecto:** SonoRitmo
+**Proyecto:** RitMute
 **Versión del documento:** 1.0
 **Fecha:** 12 de agosto de 2026
 **Entrada:** `00-INVESTIGACION.md`
@@ -358,7 +358,7 @@ El scheduler no programa "una alarma por franja". Programa **una única alarma**
 
 ## 11. Nombre y identidad
 
-- **Nombre:** SonoRitmo
-- **Package:** `com.sonoritmo.app`
+- **Nombre:** RitMute
+- **Package:** `com.ritmute.app`
 - **Tagline:** "Tu móvil suena como debe, cuando debe."
 - **Licencia:** GPLv3

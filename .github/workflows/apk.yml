@@ -83,9 +83,9 @@ jobs:
           # The release variant carries the project's own signing key; the debug variant is
           # always signed with the shared debug key and is also marked debuggable, which is
           # what Play Protect objects to. Neither is a Play-ready build.
-          cp "$apk" "sonoritmo-$variant.apk"
-          echo "path=sonoritmo-$variant.apk" >> "$GITHUB_OUTPUT"
-          echo "### APK: $(du -h "sonoritmo-$variant.apk" | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
+          cp "$apk" "ritmute-$variant.apk"
+          echo "path=ritmute-$variant.apk" >> "$GITHUB_OUTPUT"
+          echo "### APK: $(du -h "ritmute-$variant.apk" | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
 
       # Facts rather than assumptions: which certificate actually signed the file, and
       # whether the manifest ended up debuggable. Both are invisible in the APK's size and
@@ -109,21 +109,21 @@ jobs:
         run: |
           ./gradlew bundleRelease --stacktrace
           aab=$(find app/build/outputs/bundle/release -name '*.aab' | head -1)
-          cp "$aab" sonoritmo-release.aab
-          echo "### Bundle: $(du -h sonoritmo-release.aab | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
+          cp "$aab" ritmute-release.aab
+          echo "### Bundle: $(du -h ritmute-release.aab | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload as workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sonoritmo-apk
+          name: ritmute-apk
           path: ${{ steps.assemble.outputs.path }}
 
       - name: Upload the Play bundle
         if: inputs.bundle
         uses: actions/upload-artifact@v4
         with:
-          name: sonoritmo-bundle
-          path: sonoritmo-release.aab
+          name: ritmute-bundle
+          path: ritmute-release.aab
 
       - name: Publish as a release asset
         if: github.ref_type == 'tag' || inputs.publish
@@ -133,7 +133,7 @@ jobs:
           tag='${{ github.ref_type == 'tag' && github.ref_name || 'latest-build' }}'
           if ! gh release view "$tag" >/dev/null 2>&1; then
             gh release create "$tag" \
-              --title "SonoRitmo $tag" \
+              --title "RitMute $tag" \
               --notes "Installable APK built from ${{ github.sha }}. Signed with the debug key: enable \"install unknown apps\" on your phone. Not a Play-ready build." \
               ${{ github.ref_type == 'tag' && ' ' || '--prerelease' }}
           fi

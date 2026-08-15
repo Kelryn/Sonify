@@ -1,31 +1,31 @@
 @file:Suppress("TooManyFunctions")
 
-package com.sonoritmo.tools.selfcheck
+package com.ritmute.tools.selfcheck
 
-import com.sonoritmo.core.domain.logic.ConflictResolver
-import com.sonoritmo.core.domain.logic.EdgeKind
-import com.sonoritmo.core.domain.logic.NextTransitionCalculator
-import com.sonoritmo.core.domain.logic.ReconciliationAction
-import com.sonoritmo.core.domain.logic.ReconciliationPlanner
-import com.sonoritmo.core.domain.logic.ScheduleWindows
-import com.sonoritmo.core.domain.logic.Templates
-import com.sonoritmo.core.domain.logic.VolumeMath
-import com.sonoritmo.core.domain.model.ActivationSource
-import com.sonoritmo.core.domain.model.AudioSnapshot
-import com.sonoritmo.core.domain.model.AudioStream
-import com.sonoritmo.core.domain.model.AutomationState
-import com.sonoritmo.core.domain.model.DayMask
-import com.sonoritmo.core.domain.model.DesiredState
-import com.sonoritmo.core.domain.model.ProfileOptions
-import com.sonoritmo.core.domain.model.ProfileTemplate
-import com.sonoritmo.core.domain.model.RingerMode
-import com.sonoritmo.core.domain.model.Schedule
-import com.sonoritmo.core.domain.model.SchedulingWorld
-import com.sonoritmo.core.domain.model.SoundProfile
-import com.sonoritmo.core.domain.model.StreamLevel
-import com.sonoritmo.core.domain.model.VolumeSettings
-import com.sonoritmo.core.domain.port.TimeSource
-import com.sonoritmo.core.domain.port.UuidGenerator
+import com.ritmute.core.domain.logic.ConflictResolver
+import com.ritmute.core.domain.logic.EdgeKind
+import com.ritmute.core.domain.logic.NextTransitionCalculator
+import com.ritmute.core.domain.logic.ReconciliationAction
+import com.ritmute.core.domain.logic.ReconciliationPlanner
+import com.ritmute.core.domain.logic.ScheduleWindows
+import com.ritmute.core.domain.logic.Templates
+import com.ritmute.core.domain.logic.VolumeMath
+import com.ritmute.core.domain.model.ActivationSource
+import com.ritmute.core.domain.model.AudioSnapshot
+import com.ritmute.core.domain.model.AudioStream
+import com.ritmute.core.domain.model.AutomationState
+import com.ritmute.core.domain.model.DayMask
+import com.ritmute.core.domain.model.DesiredState
+import com.ritmute.core.domain.model.ProfileOptions
+import com.ritmute.core.domain.model.ProfileTemplate
+import com.ritmute.core.domain.model.RingerMode
+import com.ritmute.core.domain.model.Schedule
+import com.ritmute.core.domain.model.SchedulingWorld
+import com.ritmute.core.domain.model.SoundProfile
+import com.ritmute.core.domain.model.StreamLevel
+import com.ritmute.core.domain.model.VolumeSettings
+import com.ritmute.core.domain.port.TimeSource
+import com.ritmute.core.domain.port.UuidGenerator
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.Instant
@@ -507,7 +507,7 @@ private fun reconciliation() {
     check("stale baseline is skipped", stalePlan.action !is ReconciliationAction.RestoreBaseline)
     checkEquals(
         "stale baseline is logged as such",
-        com.sonoritmo.core.domain.model.LogReason.SKIPPED_STALE_BASELINE,
+        com.ritmute.core.domain.model.LogReason.SKIPPED_STALE_BASELINE,
         stalePlan.reason,
     )
 
@@ -589,7 +589,7 @@ private fun modelInvariants() {
     check("a profile that changes nothing is detected", empty.changesNothing)
     check(
         "validation reports the empty profile",
-        empty.validate().contains(com.sonoritmo.core.domain.model.ValidationIssue.PROFILE_CHANGES_NOTHING),
+        empty.validate().contains(com.ritmute.core.domain.model.ValidationIssue.PROFILE_CHANGES_NOTHING),
     )
 
     check("day mask rejects zero", !DayMask.isValid(DayMask.NONE))
@@ -657,7 +657,7 @@ fun main() {
     modelInvariants()
     templates()
 
-    println("SonoRitmo :core:domain self-check")
+    println("RitMute :core:domain self-check")
     println("  checks run : $checks")
     println("  failures   : ${failures.size}")
     if (failures.isNotEmpty()) {

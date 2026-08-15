@@ -1,6 +1,6 @@
 # 02 — Constitución del equipo y revisión de las especificaciones
 
-**Proyecto:** SonoRitmo
+**Proyecto:** RitMute
 **Fecha:** 12 de agosto de 2026
 **Entrada:** `01-ESPECIFICACIONES.md`
 **Salida:** especificaciones enmendadas (v1.1) + entrada para `03-PLAN-DESARROLLO.md`
@@ -253,7 +253,7 @@ Todo en `gradle/libs.versions.toml`, sin una sola versión escrita a mano en un 
 |---|---|---|
 | N1 | **Política de Play sobre wakelocks** (vigente desde marzo de 2026): superar ~2 h acumuladas en 24 h penaliza la visibilidad | Presupuesto < 5 min/día; watchdog cada 2 h en vez de cada 30 min |
 | N2 | **Direct Boot**: `BOOT_COMPLETED` no llega hasta que el usuario desbloquea. Un reinicio a las 03:00 con desbloqueo a las 08:00 pierde **todas** las transiciones nocturnas | `LOCKED_BOOT_COMPLETED` + `directBootAware="true"` + plan mínimo en almacenamiento protegido por dispositivo |
-| N3 | **Force stop**: no hay defensa técnica posible | Detectarlo con `ApplicationStartInfo.wasForceStopped()` (API 35+) y **explicarlo** en el diagnóstico: "tu móvil detuvo SonoRitmo el X; entre X e Y las reglas no se aplicaron" |
+| N3 | **Force stop**: no hay defensa técnica posible | Detectarlo con `ApplicationStartInfo.wasForceStopped()` (API 35+) y **explicarlo** en el diagnóstico: "tu móvil detuvo RitMute el X; entre X e Y las reglas no se aplicaron" |
 | N4 | **Sin `INTERNET` no hay crash reporting** | `UncaughtExceptionHandler` a fichero local rotado + "compartir informe" vía `ACTION_SEND` |
 | N5 | **Android Backup + Room con WAL = base corrupta** | `dataExtractionRules` excluyendo el fichero de Room; el backup serializa el JSON de exportación |
 | N6 | **Android 17 (beta)**: *background audio hardening* ignora en silencio los cambios de volumen desde segundo plano | FGS efímero por transición + verificación tras escribir |

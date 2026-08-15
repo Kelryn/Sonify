@@ -1,11 +1,11 @@
-# SonoRitmo privacy policy
+# RitMute privacy policy
 
 **Last updated: 14 August 2026**
 **Publisher: Kelryn — https://github.com/Kelryn/Sonify**
 
 ## Summary
 
-SonoRitmo **collects nothing, transmits nothing and shares nothing**. There are no servers,
+RitMute **collects nothing, transmits nothing and shares nothing**. There are no servers,
 no accounts, no advertising and no analytics.
 
 This is not a marketing claim. The app **does not declare the `INTERNET` permission**, so
@@ -25,12 +25,12 @@ permission into the app manifest. The check lives in `.github/workflows/ci.yml`,
 You can also check the installed file directly, without taking our word for it:
 
 ```
-aapt2 dump permissions sonoritmo.apk
+aapt2 dump permissions ritmute.apk
 ```
 
 ## What is stored, and where
 
-SonoRitmo stores the following **on the device, and only there**:
+RitMute stores the following **on the device, and only there**:
 
 - The sound profiles you create: name, icon, volumes, ringer mode and Do Not Disturb settings.
 - The schedules you configure.

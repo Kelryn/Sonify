@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SonoRitmo</string>
+    <string name="app_name">RitMute</string>
     <string name="nav_profiles">Perfiles</string>
     <string name="nav_history">Actividad</string>
     <string name="nav_settings">Ajustes</string>
 
-    <string name="tile_label">SonoRitmo</string>
+    <string name="tile_label">RitMute</string>
     <string name="tile_idle">Sin perfil</string>
     <string name="tile_idle_description">No hay ningún perfil activo. Toca para pausar todas las reglas.</string>
     <string name="tile_paused">En pausa</string>

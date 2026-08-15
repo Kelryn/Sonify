@@ -8,11 +8,11 @@ propietario de la cuenta.
 
 ## 0. Lo que tiene que pasar antes, en orden
 
-1. **DECISIÓN PENDIENTE — el `applicationId`.** Ahora mismo es `com.sonoritmo.app`. En cuanto
-   se publique la primera versión, ese identificador es **permanente**: cambiarlo obliga a
-   crear una ficha nueva, con cero instalaciones y cero reseñas, y la anterior queda como una
-   app distinta. El repositorio se llama Sonify y la app SonoRitmo. Conviven sin problema,
-   pero si alguna vez se van a unificar, es **ahora o nunca**.
+1. ~~**DECISIÓN PENDIENTE — el `applicationId`**~~ **Resuelto el 2026-08-15**: la app es
+   **RitMute** y el `applicationId` es `com.ritmute.app`. Sigue siendo permanente en cuanto
+   se publique, así que no se toca a partir de aquí. Queda una incoherencia menor: el
+   repositorio de GitHub todavía se llama `Sonify`, y las URL de este documento y de las
+   políticas de privacidad apuntan ahí.
 2. Crear la cuenta de desarrollador en https://play.google.com/console (**25 USD**, pago
    único, verificación de identidad; para cuentas personales creadas desde 2023 Google
    además exige **12 probadores durante 14 días** antes de poder publicar en producción).
@@ -29,17 +29,21 @@ Play no admite `.apk` desde agosto de 2021. Hay que subir un **Android App Bundl
 gh workflow run apk.yml --ref main -f variant=release -f bundle=true -f publish=false
 ```
 
-El `.aab` sale como artefacto `sonoritmo-bundle` de la ejecución. No se publica como release
+El `.aab` sale como artefacto `ritmute-bundle` de la ejecución. No se publica como release
 público a propósito: no es instalable en un teléfono y lo único que puede hacer algo con él
 es la Play Console.
 
 ### Firma
 
-El bundle va firmado con la clave del proyecto (`CN=SonoRitmo, O=SonoRitmo, C=ES`), la misma
-que los APK desde la v1.2.0. En Play esa clave pasa a ser la **clave de subida**, y Google
-firma la app distribuida con una clave propia (Play App Signing). Consecuencia práctica: si
-la clave de subida se pierde, Google puede emitir una nueva; lo que no se puede perder es el
-acceso a la cuenta.
+El bundle va firmado con la clave del proyecto, la misma que los APK desde la v1.2.0. Su
+titular sigue siendo **`CN=SonoRitmo, O=SonoRitmo, C=ES`**, del nombre anterior, y **se deja
+así a propósito**: el titular del certificado no se muestra en ninguna parte al usuario ni en
+la ficha de Play, y cambiarlo significa una clave nueva, es decir, desinstalar la app en todo
+dispositivo que ya la tenga instalada. Si algún día se regenera, que sea antes de publicar.
+
+En Play esa clave pasa a ser la **clave de subida**, y Google firma la app distribuida con
+una clave propia (Play App Signing). Consecuencia práctica: si la clave de subida se pierde,
+Google puede emitir una nueva; lo que no se puede perder es el acceso a la cuenta.
 
 ---
 
@@ -48,7 +52,7 @@ acceso a la cuenta.
 ### Nombre de la app (30 caracteres máx.)
 
 ```
-SonoRitmo
+RitMute
 ```
 
 ### Descripción breve (80 caracteres máx.)
@@ -67,7 +71,7 @@ Scheduled sound profiles. No internet, no accounts, no ads.
 
 **Español**
 ```
-SonoRitmo cambia el sonido de tu teléfono a la hora que tú decidas y lo devuelve a su sitio
+RitMute cambia el sonido de tu teléfono a la hora que tú decidas y lo devuelve a su sitio
 cuando termina. Silencio por la noche, timbre bajo en la oficina, No molestar en las
 reuniones: lo configuras una vez y deja de ser tu problema.
 
@@ -91,7 +95,7 @@ QUÉ HACE
 
 PRIVACIDAD, Y CÓMO COMPROBARLA
 
-SonoRitmo no pide el permiso de INTERNET. No es una promesa: es una restricción que impone
+RitMute no pide el permiso de INTERNET. No es una promesa: es una restricción que impone
 el propio Android, y significa que la aplicación no puede abrir ninguna conexión de red
 aunque quisiera. Sin servidores, sin cuentas, sin anuncios y sin analítica.
 
@@ -113,7 +117,7 @@ Código fuente: https://github.com/Kelryn/Sonify
 
 **Inglés**
 ```
-SonoRitmo changes your phone's sound at the times you choose, and puts it back when the
+RitMute changes your phone's sound at the times you choose, and puts it back when the
 schedule ends. Silence at night, a quiet ringer at the office, Do Not Disturb during
 meetings: set it once and stop thinking about it.
 
@@ -136,7 +140,7 @@ WHAT IT DOES
 
 PRIVACY, AND HOW TO CHECK IT
 
-SonoRitmo does not request the INTERNET permission. That is not a promise: it is a
+RitMute does not request the INTERNET permission. That is not a promise: it is a
 restriction enforced by Android itself, and it means the app cannot open a network
 connection even if it wanted to. No servers, no accounts, no ads, no analytics.
 

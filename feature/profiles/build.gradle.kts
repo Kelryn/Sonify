@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.sonoritmo.feature.profiles"
+    namespace = "com.ritmute.feature.profiles"
     compileSdk = 36
 
     defaultConfig {

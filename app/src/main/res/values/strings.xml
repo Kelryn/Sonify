@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SonoRitmo</string>
+    <string name="app_name">RitMute</string>
     <string name="nav_profiles">Profiles</string>
     <string name="nav_history">Activity</string>
     <string name="nav_settings">Settings</string>
 
-    <string name="tile_label">SonoRitmo</string>
+    <string name="tile_label">RitMute</string>
     <string name="tile_idle">No profile</string>
     <string name="tile_idle_description">No sound profile is active. Tap to pause all rules.</string>
     <string name="tile_paused">Paused</string>

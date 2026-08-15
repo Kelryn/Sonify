@@ -113,7 +113,7 @@
     <string name="editor_dnd_total">Silencio total</string>
     <string name="editor_dnd_calls">Permitir llamadas de</string>
     <string name="editor_dnd_repeat">Permitir a quien insista</string>
-    <string name="editor_dnd_note">SonoRitmo puede activar No molestar, pero Android no deja que ninguna app desactive un modo que ha puesto otro.</string>
+    <string name="editor_dnd_note">RitMute puede activar No molestar, pero Android no deja que ninguna app desactive un modo que ha puesto otro.</string>
     <string name="editor_volume_of">%1$s al %2$s</string>
     <string name="editor_volume_toggle">Controlar %1$s</string>
 

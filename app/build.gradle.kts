@@ -12,11 +12,11 @@ plugins {
 }
 
 android {
-    namespace = "com.sonoritmo.app"
+    namespace = "com.ritmute.app"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.sonoritmo.app"
+        applicationId = "com.ritmute.app"
         minSdk = 26
         targetSdk = 36
         versionCode = 7

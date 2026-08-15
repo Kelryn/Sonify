@@ -2,7 +2,7 @@
 <resources>
     <string name="history_title">Actividad</string>
     <string name="history_empty_title">Todavía no ha pasado nada</string>
-    <string name="history_empty_body">Aquí se registra cada cambio que SonoRitmo hace en tu sonido, con la regla que lo provocó.</string>
+    <string name="history_empty_body">Aquí se registra cada cambio que RitMute hace en tu sonido, con la regla que lo provocó.</string>
     <string name="history_filter_all">Todo</string>
     <string name="history_filter_failures">Solo problemas</string>
     <string name="history_success">Aplicado</string>
@@ -30,7 +30,7 @@
     <string name="reason_volume_fixed">Este dispositivo tiene el volumen fijo</string>
     <string name="reason_zen_limit">Demasiados modos del sistema</string>
     <string name="reason_zen_overridden">Otro modo está anulando el nuestro</string>
-    <string name="reason_force_stop">Tu móvil detuvo SonoRitmo</string>
+    <string name="reason_force_stop">Tu móvil detuvo RitMute</string>
     <string name="reason_import">Configuración importada</string>
     <string name="reason_unchanged">Nada que cambiar</string>
 
@@ -49,7 +49,7 @@
     <string name="diagnostics_alarm_missing">No hay ningún cambio programado</string>
     <string name="diagnostics_repairs">Veces que el vigilante lo ha arreglado: %1$d</string>
     <string name="diagnostics_volume_fixed">Este dispositivo tiene el nivel de salida fijo; los cambios de volumen no hacen nada.</string>
-    <string name="diagnostics_force_stop">Tu móvil forzó la detención de SonoRitmo. Desde entonces y hasta que la abriste, no se aplicó ninguna regla.</string>
+    <string name="diagnostics_force_stop">Tu móvil forzó la detención de RitMute. Desde entonces y hasta que la abriste, no se aplicó ninguna regla.</string>
     <string name="diagnostics_vendor">Tu móvil (%1$s) es conocido por detener apps en segundo plano de forma agresiva.</string>
     <string name="diagnostics_grant">Conceder</string>
     <string name="diagnostics_open_settings">Abrir ajustes</string>

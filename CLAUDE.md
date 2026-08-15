@@ -1,4 +1,4 @@
-# SonoRitmo — contexto para Claude Code
+# RitMute — contexto para Claude Code
 
 App Android (Kotlin + Compose) de perfiles de sonido programados. Repositorio:
 `github.com/Kelryn/Sonify`.
@@ -139,12 +139,27 @@ Todo esto está razonado en `docs/05-QA.md` y `docs/06-PUBLICACION.md`:
 
 ---
 
-## 7. Nombre pendiente de decidir
+## 7. Nombre: decidido
 
-El repositorio se llama **Sonify**; la app, el `applicationId` (`com.sonoritmo.app`) y todos
-los paquetes dicen **SonoRitmo**. Conviven sin problema, pero el `applicationId` es
-irreversible una vez publicado en Play. Si el usuario quiere unificarlo, hazlo **antes** de
-cualquier publicación.
+La app se llama **RitMute** (*ritmo* + *mute*), y el `applicationId` es `com.ritmute.app`.
+Decidido el 2026-08-15, antes de cualquier publicación, que era la única ventana para
+hacerlo: el `applicationId` es irreversible en cuanto la app entra en Play.
+
+Los dos nombres anteriores se descartaron por motivos comprobados, no por gusto:
+
+- **Sonify** tiene al menos cuatro apps publicadas con ese nombre entre Google Play y la
+  App Store. Imposible aparecer en una búsqueda.
+- **SonoRitmo** no tenía ninguna app, pero existe `sonoritmo.com`, una empresa de audio
+  profesional con tienda y presencia en redes. Una marca activa **del mismo sector** es el
+  supuesto en el que prosperan las reclamaciones que retiran apps de Play.
+
+El **repositorio de GitHub sigue llamándose `Sonify`**, y esa es la única incoherencia que
+queda. Es inofensiva —GitHub redirige las URL antiguas— pero si se renombra, hay que
+actualizar los enlaces de `docs/07-PLAY-STORE.md` y de las dos políticas de privacidad.
+
+Lo que **no** se ha cambiado es el certificado de firma, cuyo titular sigue diciendo
+`CN=SonoRitmo`. Es invisible para el usuario y para Play, y regenerarlo obligaría a
+desinstalar la app en cualquier dispositivo que ya la tenga. Ver `docs/07-PLAY-STORE.md` §1.
 
 ---
 

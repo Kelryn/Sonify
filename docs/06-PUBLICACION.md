@@ -1,6 +1,6 @@
 # 06 — Publicación
 
-**Proyecto:** SonoRitmo
+**Proyecto:** RitMute
 **Versión:** 1.0.0
 **Fecha:** 12 de agosto de 2026
 
@@ -9,7 +9,7 @@
 ## 1. Contenido del repositorio
 
 ```
-sonoritmo/
+ritmute/
 ├── .github/workflows/ci.yml     4 trabajos: static, selfcheck, unit, build
 ├── app/                         Ensamblaje, receivers, tile, widget, DI raíz
 ├── core/domain/                 Kotlin puro: toda la lógica que decide algo
@@ -116,8 +116,8 @@ de diseño.
 
 Nada de esto bloquea el repositorio, pero sí la ficha de la tienda:
 
-1. **Verificar el nombre y el `applicationId`.** `com.sonoritmo.app` es irreversible tras la
-   primera publicación, y «SonoRitmo» no se ha comprobado frente a marcas registradas ni
+1. **Verificar el nombre y el `applicationId`.** `com.ritmute.app` es irreversible tras la
+   primera publicación, y «RitMute» no se ha comprobado frente a marcas registradas ni
    frente a apps existentes.
 2. **Justificar `SCHEDULE_EXACT_ALARM`** en la ficha. No se usa `USE_EXACT_ALARM` porque la
    política reserva ese permiso a apps de calendario y despertador.

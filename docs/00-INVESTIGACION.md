@@ -1,6 +1,6 @@
 # 00 — Investigación y análisis competitivo
 
-**Proyecto:** SonoRitmo — gestor de perfiles de sonido por horarios y contexto para Android
+**Proyecto:** RitMute — gestor de perfiles de sonido por horarios y contexto para Android
 **Fecha:** 12 de agosto de 2026
 **Autor de esta fase:** Claude (investigación previa al equipo de desarrollo)
 **Estado:** Cerrado — sirve de entrada para `01-ESPECIFICACIONES.md`
@@ -143,7 +143,7 @@ Ordenado por impacto sobre el usuario:
 
 ---
 
-## 6. Oportunidades diferenciales para SonoRitmo
+## 6. Oportunidades diferenciales para RitMute
 
 Cada una responde directamente a un fallo del apartado anterior.
 

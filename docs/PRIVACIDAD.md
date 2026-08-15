@@ -1,11 +1,11 @@
-# Política de privacidad de SonoRitmo
+# Política de privacidad de RitMute
 
 **Última actualización: 14 de agosto de 2026**
 **Responsable: Kelryn — https://github.com/Kelryn/Sonify**
 
 ## Resumen
 
-SonoRitmo **no recoge, no transmite y no comparte ningún dato personal**. No hay servidores,
+RitMute **no recoge, no transmite y no comparte ningún dato personal**. No hay servidores,
 no hay cuentas, no hay anuncios y no hay analítica.
 
 Esto no es una promesa comercial: la aplicación **no declara el permiso `INTERNET`**, de modo
@@ -25,12 +25,12 @@ La integración continua del proyecto rechaza cualquier cambio que introduzca el
 También puedes verificarlo sobre el archivo instalado, sin fiarte de nosotros:
 
 ```
-aapt2 dump permissions sonoritmo.apk
+aapt2 dump permissions ritmute.apk
 ```
 
 ## Qué datos se guardan y dónde
 
-SonoRitmo guarda **en el propio dispositivo, y únicamente allí**:
+RitMute guarda **en el propio dispositivo, y únicamente allí**:
 
 - Los perfiles de sonido que creas: nombre, icono, volúmenes, modo de timbre y ajustes de
   No molestar.

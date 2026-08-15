@@ -2,7 +2,7 @@ He leído ambos documentos. Aquí está el informe.
 
 ---
 
-# Informe de UI/UX y Jetpack Compose — SonoRitmo
+# Informe de UI/UX y Jetpack Compose — RitMute
 
 ## Veredicto general
 
@@ -67,12 +67,12 @@ RootNavHost  (start = RouteSplash)
 
 - **Jerarquía de 2 niveles máximo** desde cualquier pestaña. Nada requiere tres saltos.
 - **La edición nunca es el destino por defecto de un toque en la lista.** Se llega a `RouteProfileEditor` solo desde: icono explícito de edición en la tarjeta, menú de desbordamiento, o FAB de creación.
-- **Deep links** (esquema `sonoritmo://`, sin `http`, coherente con la ausencia de `INTERNET`):
-  - `sonoritmo://profiles` — desde widget y notificación.
-  - `sonoritmo://profile/{id}` — desde widget al tocar un perfil concreto.
-  - `sonoritmo://diagnostics` — desde la notificación de permiso faltante y desde el QS tile en estado `UNAVAILABLE`.
-  - `sonoritmo://history?profileId={id}` — desde la notificación «se aplicó X» (RF-27, CU-07).
-  - `sonoritmo://pause` — desde el QS tile de pausa.
+- **Deep links** (esquema `ritmute://`, sin `http`, coherente con la ausencia de `INTERNET`):
+  - `ritmute://profiles` — desde widget y notificación.
+  - `ritmute://profile/{id}` — desde widget al tocar un perfil concreto.
+  - `ritmute://diagnostics` — desde la notificación de permiso faltante y desde el QS tile en estado `UNAVAILABLE`.
+  - `ritmute://history?profileId={id}` — desde la notificación «se aplicó X» (RF-27, CU-07).
+  - `ritmute://pause` — desde el QS tile de pausa.
 - **Preservación de estado en rotación (RF-47):** `rememberSaveable` para estado local de UI (posición de scroll, pestaña de filtro, campos de texto no confirmados) y `SavedStateHandle` en ViewModels para parámetros de ruta y filtros. Los editores mantienen el borrador completo en `SavedStateHandle` para sobrevivir a muerte del proceso durante la ida a la pantalla de permisos del sistema.
 - **Reentrada desde pantallas del sistema:** las llamadas a `ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS` y `ACTION_REQUEST_SCHEDULE_EXACT_ALARM` no devuelven resultado. Hay que **reevaluar el estado del permiso en `ON_RESUME`** mediante un observador de ciclo de vida en cada pantalla que dependa de un permiso, no en `onActivityResult`.
 
@@ -85,7 +85,7 @@ RootNavHost  (start = RouteSplash)
 **Propósito.** Responder en un vistazo a «qué está activo, por qué, y qué viene después», y permitir activar cualquier perfil en un solo toque.
 
 **Componentes (de arriba abajo).**
-- `TopAppBar` (`LargeTopAppBar` colapsable) con título «SonoRitmo», acción de pausa global (icono `pause_circle`, con badge si la pausa está activa) y desbordamiento (Ajustes, Diagnóstico).
+- `TopAppBar` (`LargeTopAppBar` colapsable) con título «RitMute», acción de pausa global (icono `pause_circle`, con badge si la pausa está activa) y desbordamiento (Ajustes, Diagnóstico).
 - **`ActiveStateBanner`** — el componente identitario. Card `tonalElevation`, ancho completo, con:
   - Emoji + nombre del perfil activo, o «Sin perfil activo».
   - Línea de origen: «Programado 23:00–07:00» / «Activado a mano, quedan 47 min» / «Sin reglas activas ahora».
@@ -227,7 +227,7 @@ RootNavHost  (start = RouteSplash)
   - Acceso a No molestar → «Conceder»
   - Alarmas exactas → «Conceder» / «Degradado a ventana de 5 min»
   - Notificaciones → «Permitir»
-  - Optimización de batería → «Excluir SonoRitmo»
+  - Optimización de batería → «Excluir RitMute»
   - Guía del fabricante (RF-34) → «Ver pasos para Xiaomi» (contenido embebido, sin abrir navegador — no hay `INTERNET`)
   - Salud del programador: «Próxima transición: hoy a las 18:00», «Última comprobación: hace 12 min», con acción «Comprobar ahora» (fuerza reconciliación).
 - Botón «Ejecutar prueba»: aplica y revierte un cambio inocuo y reporta si funcionó.
@@ -240,7 +240,7 @@ RootNavHost  (start = RouteSplash)
 
 **Propósito.** RF-36/37, D5, corrige el fallo 5 del mercado.
 
-**Componentes.** Dos tarjetas grandes: «Exportar» (SAF `CreateDocument`, nombre sugerido `sonoritmo-YYYY-MM-DD.json`) e «Importar» (`OpenDocument`). Al importar: pantalla de confirmación previa con resumen («6 perfiles, 9 franjas — versión de esquema 1») y elección **Fusionar / Reemplazar**, con advertencia explícita en el caso destructivo.
+**Componentes.** Dos tarjetas grandes: «Exportar» (SAF `CreateDocument`, nombre sugerido `ritmute-YYYY-MM-DD.json`) e «Importar» (`OpenDocument`). Al importar: pantalla de confirmación previa con resumen («6 perfiles, 9 franjas — versión de esquema 1») y elección **Fusionar / Reemplazar**, con advertencia explícita en el caso destructivo.
 
 **Estados.** Idle / procesando (progreso determinado) / éxito (resumen) / error de validación (mensaje concreto: versión incompatible, JSON malformado, campo desconocido).
 
@@ -258,7 +258,7 @@ Especificado con texto exacto en la sección «Flujo de onboarding de permisos»
 
 - **`QuickProfileTileService`** — «Perfil rápido». Alterna el perfil marcado como favorito (o el último activado).
   - Estados: `STATE_ACTIVE` (subtítulo = nombre del perfil, icono con el emoji renderizado no — usar icono vectorial monocromo; el emoji no se renderiza bien en tiles), `STATE_INACTIVE`, `STATE_UNAVAILABLE` cuando falta `ACCESS_NOTIFICATION_POLICY` (toque → deep link a diagnóstico vía `startActivityAndCollapse` con `PendingIntent`, obligatorio en API 34+).
-  - Etiqueta: «SonoRitmo». Subtítulo (API 29+): nombre del perfil o «Sin perfil».
+  - Etiqueta: «RitMute». Subtítulo (API 29+): nombre del perfil o «Sin perfil».
 - **`PauseTileService`** — «Pausar reglas». Alterna la pausa global de 1 h por defecto; pulsación larga → app en `SheetGlobalPause`.
 
 Actualización mediante `TileService.requestListeningState()` tras cada transición del motor. Ambos deben funcionar sin abrir la app (nada de `startActivity` en el camino feliz).
@@ -789,7 +789,7 @@ Principios: **un permiso por pantalla**, siempre explicando *la consecuencia rea
 
 ### Paso 0 — Bienvenida (`RouteWelcome`)
 
-> **Título:** Bienvenido a SonoRitmo
+> **Título:** Bienvenido a RitMute
 > **Cuerpo:** Tu móvil suena como debe, cuando debe.
 > Crea perfiles de sonido y deja que se activen solos: silencio por la noche, vibración en el trabajo, alarma siempre al máximo.
 > **Tres líneas con icono:**
@@ -806,8 +806,8 @@ Principios: **un permiso por pantalla**, siempre explicando *la consecuencia rea
 > **Encabezado:** Paso 1 de 4
 > **Título:** Permiso para silenciar el teléfono
 > **Cuerpo:** Android exige un permiso especial para que una app pueda poner el móvil en silencio, en vibración o activar el modo No molestar.
-> **Sin este permiso, SonoRitmo no podrá silenciar tu teléfono ni activar No molestar: tus perfiles fallarán a la hora de la verdad.**
-> **Nota en tarjeta informativa:** Se concede desde una pantalla de Ajustes de Android. Busca «SonoRitmo» en la lista y actívalo. Después vuelve aquí con el botón atrás.
+> **Sin este permiso, RitMute no podrá silenciar tu teléfono ni activar No molestar: tus perfiles fallarán a la hora de la verdad.**
+> **Nota en tarjeta informativa:** Se concede desde una pantalla de Ajustes de Android. Busca «RitMute» en la lista y actívalo. Después vuelve aquí con el botón atrás.
 > **Botón primario:** Ir a Ajustes y conceder
 > **Botón texto:** Ahora no
 
@@ -823,7 +823,7 @@ Principios: **un permiso por pantalla**, siempre explicando *la consecuencia rea
 
 > **Encabezado:** Paso 2 de 4
 > **Título:** Permiso para cambiar el sonido a la hora exacta
-> **Cuerpo:** Para que tu perfil de noche empiece a las 23:00 y no a las 23:07, SonoRitmo necesita programar alarmas exactas.
+> **Cuerpo:** Para que tu perfil de noche empiece a las 23:00 y no a las 23:07, RitMute necesita programar alarmas exactas.
 > Es el permiso que marca la diferencia entre una app que funciona y una que «a veces no salta».
 > **Nota:** No usamos este permiso para despertarte ni para enviarte nada: solo para cambiar el sonido en el momento exacto que tú has programado.
 > **Botón primario:** Permitir alarmas exactas
@@ -833,7 +833,7 @@ Principios: **un permiso por pantalla**, siempre explicando *la consecuencia rea
 > ✓ **Listo.** Tus cambios de sonido ocurrirán a la hora exacta.
 
 **Estado denegado (degradación explícita, RF-29):**
-> ⚠ **Modo aproximado activado.** SonoRitmo seguirá funcionando, pero los cambios pueden retrasarse hasta 5 minutos y el sistema puede aplazarlos si el móvil está en reposo.
+> ⚠ **Modo aproximado activado.** RitMute seguirá funcionando, pero los cambios pueden retrasarse hasta 5 minutos y el sistema puede aplazarlos si el móvil está en reposo.
 > Puedes activarlo cuando quieras en Ajustes → Estado del sistema.
 > **Botón primario:** Reintentar · **Botón texto:** Continuar así
 
@@ -841,13 +841,13 @@ Principios: **un permiso por pantalla**, siempre explicando *la consecuencia rea
 
 > **Encabezado:** Paso 3 de 4
 > **Título:** Avisos cuando cambie tu sonido
-> **Cuerpo:** Si lo permites, SonoRitmo te avisará cuando active un perfil y, sobre todo, cuando algo falle: un permiso retirado, un cambio que no se pudo aplicar.
+> **Cuerpo:** Si lo permites, RitMute te avisará cuando active un perfil y, sobre todo, cuando algo falle: un permiso retirado, un cambio que no se pudo aplicar.
 > **Es opcional. La app funciona igual sin notificaciones, pero no podrá avisarte si algo va mal.**
 > **Botón primario:** Permitir notificaciones
 > **Botón texto:** No, gracias
 
 **Estado denegado permanentemente (segunda denegación / «no volver a preguntar»):**
-> Has bloqueado las notificaciones para SonoRitmo. Si cambias de idea, actívalas desde los ajustes de Android.
+> Has bloqueado las notificaciones para RitMute. Si cambias de idea, actívalas desde los ajustes de Android.
 > **Botón primario:** Abrir ajustes de notificaciones · **Botón texto:** Continuar
 
 ### Paso 4 — Optimización de batería (`RouteBatteryGuidance`) · **condicional y opcional**
@@ -855,19 +855,19 @@ Principios: **un permiso por pantalla**, siempre explicando *la consecuencia rea
 *Solo se muestra si `Build.MANUFACTURER` está en la lista agresiva (Xiaomi, Huawei, Oppo, Vivo, OnePlus, Samsung) o si la app está bajo optimización.*
 
 > **Encabezado:** Paso 4 de 4
-> **Título:** Tu móvil {fabricante} puede cerrar SonoRitmo
+> **Título:** Tu móvil {fabricante} puede cerrar RitMute
 > **Cuerpo:** Algunos fabricantes cierran las apps en segundo plano para ahorrar batería. Si eso ocurre, tus perfiles pueden no activarse.
-> SonoRitmo consume menos del 1 % de batería al día: no tiene servicios permanentes ni se conecta a internet.
+> RitMute consume menos del 1 % de batería al día: no tiene servicios permanentes ni se conecta a internet.
 > **Botón primario:** Excluir del ahorro de batería
 > **Botón secundario:** Ver los pasos para {fabricante}
 > **Botón texto:** Saltar
 
 *Contenido de «Ver los pasos» embebido en la app (no hay `INTERNET`), por ejemplo para Xiaomi:*
 > **En tu Xiaomi:**
-> 1. Ajustes → Aplicaciones → Administrar aplicaciones → SonoRitmo.
+> 1. Ajustes → Aplicaciones → Administrar aplicaciones → RitMute.
 > 2. Activa «Inicio automático».
 > 3. En «Ahorro de batería», elige «Sin restricciones».
-> 4. En la pantalla de apps recientes, mantén pulsada SonoRitmo y toca el candado.
+> 4. En la pantalla de apps recientes, mantén pulsada RitMute y toca el candado.
 
 ### Paso 5 — Primer perfil (`RouteFirstProfile`)
 
@@ -943,7 +943,7 @@ Principios: **un permiso por pantalla**, siempre explicando *la consecuencia rea
 
 Cada punto está atado a una queja concreta del documento 00 y a una decisión de diseño concreta de este informe.
 
-| # | Error de la competencia | Fuente | Decisión de diseño en SonoRitmo | Prueba de aceptación |
+| # | Error de la competencia | Fuente | Decisión de diseño en RitMute | Prueba de aceptación |
 |---|---|---|---|---|
 | **UX-01** | **Pulsar el perfil abre la edición en vez de activarlo** | 00 §3.3 | El toque en el cuerpo de `ProfileCard` **activa** el perfil de inmediato con snackbar de deshacer. La edición requiere un icono de lápiz explícito o el menú de desbordamiento. La pulsación larga activa con duración. | Un usuario nuevo activa un perfil en un solo toque, sin pasar por ningún formulario |
 | **UX-02** | **No hay indicador visual del perfil activo** | 00 §3.3, RF-08 | Triple redundancia (contenedor de color + chip textual «Activo» + `stateDescription`) en la tarjeta, más `ActiveStateBanner` persistente en la pantalla de inicio, más QS tile, más widget. El estado activo se ve en cuatro superficies. | Con TalkBack y en escala de grises, el perfil activo sigue siendo identificable |

@@ -1,6 +1,6 @@
 # 04 — Desarrollo
 
-**Proyecto:** SonoRitmo
+**Proyecto:** RitMute
 **Fecha:** 12 de agosto de 2026
 **Entrada:** `03-PLAN-DESARROLLO.md`
 **Estado:** fases F0–F5 completadas
@@ -88,7 +88,7 @@ y ejecutable con `kotlinc` a secas.
 ```
 $ kotlinc $(find core/domain/src/main -name '*.kt') tools/selfcheck/DomainSelfCheck.kt \
     -include-runtime -d selfcheck.jar && java -jar selfcheck.jar
-SonoRitmo :core:domain self-check
+RitMute :core:domain self-check
   checks run : 107
   failures   : 0
   OK
