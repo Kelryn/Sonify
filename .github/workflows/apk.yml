@@ -26,6 +26,14 @@ on:
         required: false
         default: false
         type: boolean
+      bundle:
+        # Play has not accepted APK uploads since 2021. The bundle is never attached to a
+        # public release: it is not installable on a phone, and the only thing that can do
+        # anything with it is the Play Console.
+        description: 'Also build an Android App Bundle (.aab) for the Play Console'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -94,11 +102,28 @@ jobs:
             | grep -E "^(package|application-debuggable)" \
             | tee -a "$GITHUB_STEP_SUMMARY"
 
+      - name: Build the Play bundle
+        if: inputs.bundle
+        env:
+          SIGNING_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+        run: |
+          ./gradlew bundleRelease --stacktrace
+          aab=$(find app/build/outputs/bundle/release -name '*.aab' | head -1)
+          cp "$aab" sonoritmo-release.aab
+          echo "### Bundle: $(du -h sonoritmo-release.aab | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload as workflow artifact
         uses: actions/upload-artifact@v4
         with:
           name: sonoritmo-apk
           path: ${{ steps.assemble.outputs.path }}
+
+      - name: Upload the Play bundle
+        if: inputs.bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonoritmo-bundle
+          path: sonoritmo-release.aab
 
       - name: Publish as a release asset
         if: github.ref_type == 'tag' || inputs.publish
