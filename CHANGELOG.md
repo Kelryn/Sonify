@@ -2,6 +2,42 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [2.0.0] — 2026-08-15
+
+**La aplicación pasa a llamarse RitMute** (*ritmo* + *mute*), y su identificador es
+`com.ritmute.app`. Número mayor porque, para Android, esto es una aplicación distinta.
+
+### Por qué
+
+El nombre era la última decisión abierta del proyecto, y publicar en Play la cierra para
+siempre: el `applicationId` no se puede cambiar una vez la app está en la tienda. Los dos
+candidatos anteriores se comprobaron y los dos fallaron.
+
+- **Sonify** tiene al menos cuatro apps publicadas con ese nombre entre Google Play y la App
+  Store. Imposible aparecer en una búsqueda.
+- **SonoRitmo** no tenía ninguna app, pero `sonoritmo.com` es una empresa de audio profesional
+  en activo, con tienda y presencia en redes. Una marca del mismo sector es justo el supuesto
+  en el que prosperan las retiradas de aplicaciones.
+
+**RitMute** no tiene presencia en ninguna tienda ni en la web.
+
+### Qué implica para quien ya la tenga instalada
+
+Android trata `com.ritmute.app` como una aplicación nueva. La anterior **no se actualiza a
+esta**: aparecerán las dos y hay que desinstalar la vieja. Los perfiles no se conservan; si
+quieres llevártelos, expórtalos desde Ajustes antes de desinstalar y vuelve a importarlos.
+
+### Qué se ha cambiado
+
+Todos los paquetes de `com.sonoritmo` a `com.ritmute`, las clases y recursos que llevaban el
+nombre antiguo, el manifiesto, las reglas de ProGuard, la acción de la alarma, el esquema de
+enlaces profundos, el nombre del fichero de base de datos, los artefactos del workflow, los
+textos visibles en los dos idiomas y toda la documentación.
+
+Sin cambios a propósito: el repositorio de GitHub sigue llamándose `Sonify`, y el certificado
+de firma sigue diciendo `CN=SonoRitmo`. El titular del certificado no se muestra en ninguna
+parte, y regenerarlo obligaría a desinstalar la app en cualquier dispositivo que ya la tenga.
+
 ## [1.5.1] — 2026-08-14
 
 ### Corregido
