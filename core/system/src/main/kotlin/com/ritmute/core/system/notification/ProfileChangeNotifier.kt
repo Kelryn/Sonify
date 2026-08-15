@@ -1,6 +1,7 @@
 package com.ritmute.core.system.notification
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -41,6 +42,11 @@ class ProfileChangeNotifierImpl @Inject constructor(
 
     private val manager = NotificationManagerCompat.from(context)
 
+    // The permission is checked on the first line of the body and the call is wrapped in a
+    // catch for the revoked-in-between case. Lint still cannot connect the guard to the call
+    // through NotificationManagerCompat, and annotating the function with @RequiresPermission
+    // instead would push an obligation onto SchedulerCoordinator that belongs here.
+    @SuppressLint("MissingPermission")
     override fun notifyApplied(profileName: String) {
         // POST_NOTIFICATIONS is a runtime permission from API 33. Denied is a normal state,
         // not an error: the profile still applies, and the only thing lost is the note.
