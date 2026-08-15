@@ -2,6 +2,13 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.5.1] — 2026-08-14
+
+### Corregido
+
+- El aviso de estado se formateaba la hora por su cuenta y seguía diciendo «Termina a las
+  7:00» mientras el resto de la app ya decía `07:00`. Ahora hay un único formateador.
+
 ## [1.5.0] — 2026-08-14
 
 Tres detalles vistos ya con la app corriendo en un emulador.

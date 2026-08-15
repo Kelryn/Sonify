@@ -51,9 +51,6 @@ import com.sonoritmo.core.ui.component.VolumeState
 import com.sonoritmo.core.ui.format.ScheduleFormatter
 import com.sonoritmo.feature.profiles.R
 import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -427,10 +424,7 @@ private fun userMessageText(message: UserMessage): String = when (message.kind) 
     UserMessage.Kind.SAVE_FAILED -> stringResource(R.string.msg_save_failed)
 }
 
-private fun shortTime(instant: Instant): String =
-    DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
-        .withZone(ZoneId.systemDefault())
-        .format(instant)
+private fun shortTime(instant: Instant): String = ScheduleFormatter.time(instant)
 
 private const val PAUSE_DEFAULT_MINUTES = 60
 

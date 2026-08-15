@@ -16,7 +16,9 @@ import com.sonoritmo.core.domain.model.DayMask
 import com.sonoritmo.core.domain.model.RingerMode
 import com.sonoritmo.core.domain.model.Schedule
 import com.sonoritmo.core.ui.R
+import java.time.Instant
 import java.time.LocalTime
+import java.time.ZoneId
 import java.time.chrono.IsoChronology
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
@@ -39,6 +41,15 @@ object ScheduleFormatter {
 
     fun time(minuteOfDay: Int, locale: Locale = Locale.getDefault()): String =
         LocalTime.of(minuteOfDay / 60, minuteOfDay % 60).format(paddedTimeFormat(locale))
+
+    /**
+     * The same clock for an absolute instant.
+     *
+     * It exists so that no screen rolls its own: the banner used to, and went on saying
+     * `7:00` under a schedule that had already learnt to say `07:00`.
+     */
+    fun time(instant: Instant, locale: Locale = Locale.getDefault()): String =
+        paddedTimeFormat(locale).withZone(ZoneId.systemDefault()).format(instant)
 
     /**
      * The locale's own short time format, with the hour widened to two digits.
