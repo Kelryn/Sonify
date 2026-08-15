@@ -130,12 +130,13 @@ fun ProfilesScreen(
             )
 
             if (!state.isLoading && state.rows.isEmpty()) {
+                // No action of its own: the floating + directly below opens the very same
+                // sheet, and two buttons for one thing on an otherwise empty screen reads
+                // as though they must do something different.
                 EmptyState(
                     icon = Icons.Filled.Add,
                     title = stringResource(R.string.profiles_empty_title),
                     body = stringResource(R.string.profiles_empty_body),
-                    actionLabel = stringResource(R.string.profiles_empty_action),
-                    onAction = { templateSheetOpen = true },
                 )
             } else {
                 LazyColumn(

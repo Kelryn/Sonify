@@ -16,6 +16,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -42,6 +44,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -275,25 +278,46 @@ private val ICON_CATALOGUE = listOf(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun IconSection(current: String?, onEmojiChange: (String?) -> Unit) {
+    // Collapsed by default. Laid out flat, twenty-five chips filled five rows and pushed
+    // the volumes — the reason anyone opens this screen — off the bottom of it.
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
     SectionHeader(stringResource(R.string.editor_section_icon))
-    FlowRow(
+    OutlinedButton(
+        onClick = { expanded = !expanded },
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        // "None" first, and selectable: falling back to the initial of the name is a valid
-        // choice, not an absence of one.
-        FilterChip(
-            selected = current == null,
-            onClick = { onEmojiChange(null) },
-            label = { Text(stringResource(R.string.editor_icon_none)) },
+        Text(
+            text = current ?: stringResource(R.string.editor_icon_none),
+            style = MaterialTheme.typography.titleMedium,
         )
-        ICON_CATALOGUE.forEach { emoji ->
+        Icon(
+            imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+            contentDescription = stringResource(R.string.editor_icon_choose),
+            modifier = Modifier.padding(start = 8.dp),
+        )
+    }
+
+    if (expanded) {
+        FlowRow(
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            // "None" first, and selectable: falling back to the initial of the name is a
+            // valid choice, not an absence of one.
             FilterChip(
-                selected = current == emoji,
-                onClick = { onEmojiChange(emoji) },
-                label = { Text(text = emoji, style = MaterialTheme.typography.titleMedium) },
+                selected = current == null,
+                onClick = { onEmojiChange(null); expanded = false },
+                label = { Text(stringResource(R.string.editor_icon_none)) },
             )
+            ICON_CATALOGUE.forEach { emoji ->
+                FilterChip(
+                    selected = current == emoji,
+                    onClick = { onEmojiChange(emoji); expanded = false },
+                    label = { Text(text = emoji, style = MaterialTheme.typography.titleMedium) },
+                )
+            }
         }
     }
 }

@@ -88,6 +88,7 @@
     <string name="editor_name">Nombre</string>
     <string name="editor_section_icon">Icono</string>
     <string name="editor_icon_none">Inicial</string>
+    <string name="editor_icon_choose">Elegir un icono</string>
     <string name="editor_section_volumes">Volúmenes</string>
     <string name="editor_section_ringer">Timbre</string>
     <string name="editor_section_dnd">No molestar</string>

@@ -17,9 +17,12 @@ import com.sonoritmo.core.domain.model.RingerMode
 import com.sonoritmo.core.domain.model.Schedule
 import com.sonoritmo.core.ui.R
 import java.time.LocalTime
+import java.time.chrono.IsoChronology
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
 import java.time.format.FormatStyle
 import java.util.Locale
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Turns domain values into text the user reads.
@@ -28,15 +31,39 @@ import java.util.Locale
  * sentence out of literals in code: the log, the widget, the tile and the schedule list
  * all describe the same things, and they have to say them the same way in both languages.
  *
- * Times use the user's locale and their 12/24-hour preference via
- * [DateTimeFormatter.ofLocalizedTime]; hard-coding `HH:mm` would look wrong to anyone on a
- * 12-hour locale.
+ * Times follow the user's locale and its 12/24-hour convention; hard-coding `HH:mm` would
+ * look wrong to anyone on a 12-hour locale. The only thing forced is a two-digit hour, so
+ * that a column of times lines up.
  */
 object ScheduleFormatter {
 
     fun time(minuteOfDay: Int, locale: Locale = Locale.getDefault()): String =
-        LocalTime.of(minuteOfDay / 60, minuteOfDay % 60)
-            .format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale))
+        LocalTime.of(minuteOfDay / 60, minuteOfDay % 60).format(paddedTimeFormat(locale))
+
+    /**
+     * The locale's own short time format, with the hour widened to two digits.
+     *
+     * Spanish renders `FormatStyle.SHORT` as `7:00`, which sits under `23:00` a character
+     * out of line everywhere the two appear together. Padding the pattern rather than
+     * hard-coding `HH:mm` keeps the locale's separator, its field order, and its 12- or
+     * 24-hour choice: a 12-hour locale still gets `07:00 AM`, not a 24-hour clock.
+     */
+    private fun paddedTimeFormat(locale: Locale): DateTimeFormatter =
+        formatCache.computeIfAbsent(locale) {
+            val pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(
+                null,
+                FormatStyle.SHORT,
+                IsoChronology.INSTANCE,
+                it,
+            )
+            DateTimeFormatter.ofPattern(pattern.widenHourField(), it)
+        }
+
+    /** Doubles a lone hour symbol, leaving an already two-digit pattern alone. */
+    private fun String.widenHourField(): String =
+        Regex("(?<![HhKk])([HhKk])(?![HhKk])").replace(this) { match -> match.value.repeat(2) }
+
+    private val formatCache = ConcurrentHashMap<Locale, DateTimeFormatter>()
 
     /**
      * Just the two wall-clock times.

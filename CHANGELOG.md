@@ -2,6 +2,20 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.5.0] — 2026-08-14
+
+Tres detalles vistos ya con la app corriendo en un emulador.
+
+### Cambiado
+
+- **Las horas se muestran con dos dígitos**: `07:00`, no `7:00`, que quedaba descuadrado bajo
+  `23:00`. Se ensancha el patrón del idioma en vez de fijar `HH:mm`, así que un idioma de 12
+  horas sigue viendo `07:00 AM` y no un reloj de 24.
+- **El catálogo de iconos empieza plegado.** Extendido ocupaba cinco filas y empujaba los
+  volúmenes fuera de la pantalla.
+- El estado vacío deja de ofrecer «Elegir plantilla»: el botón flotante que hay justo debajo
+  abre exactamente el mismo selector.
+
 ## [1.4.0] — 2026-08-14
 
 ### Añadido
