@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
@@ -155,7 +156,7 @@ fun ProfileCard(
                 // profile touches made the row a different shape on every card and gave no
                 // way to see at a glance what a profile leaves alone.
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(GLYPH_GAP),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     volumes.forEach { badge ->
@@ -215,24 +216,32 @@ private fun VolumeGlyph(badge: VolumeBadge) {
             MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = UNCHANGED_ALPHA)
     }
 
+    // requiredSize, not size: `size` is only a preferred value, so when the row ran out of
+    // width the last glyphs were squeezed to whatever was left and the final one vanished
+    // altogether. `requiredSize` refuses to be compressed, which is what "all the same size"
+    // has to mean for a row that is read as a row.
     Box(
         modifier = Modifier
-            .size(20.dp)
+            .requiredSize(GLYPH_SIZE)
             .semantics { contentDescription = badge.contentDescription },
         contentAlignment = Alignment.Center,
     ) {
         Icon(
             imageVector = badge.icon,
             contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.requiredSize(GLYPH_SIZE),
             tint = tint,
         )
         if (badge.state == VolumeState.SILENCED) {
-            Canvas(modifier = Modifier.fillMaxSize()) {
+            // Inset by a fixed fraction of the box rather than drawn corner to corner, so
+            // the slash is the same length and the same angle on every glyph instead of
+            // following whatever size the icon happened to get.
+            Canvas(modifier = Modifier.requiredSize(GLYPH_SIZE)) {
+                val inset = size.minDimension * STRIKE_INSET
                 drawLine(
                     color = tint,
-                    start = Offset(x = 0f, y = size.height),
-                    end = Offset(x = size.width, y = 0f),
+                    start = Offset(x = inset, y = size.height - inset),
+                    end = Offset(x = size.width - inset, y = inset),
                     strokeWidth = STRIKE_WIDTH.toPx(),
                     cap = StrokeCap.Round,
                 )
@@ -241,7 +250,12 @@ private fun VolumeGlyph(badge: VolumeBadge) {
     }
 }
 
-private val STRIKE_WIDTH = 1.5.dp
+private val GLYPH_SIZE = 18.dp
+
+/** Matches the gap between the day circles, so the two rows read as one block. */
+private val GLYPH_GAP = 4.dp
+private val STRIKE_WIDTH = 2.dp
+private const val STRIKE_INSET = 0.12f
 private const val UNCHANGED_ALPHA = 0.38f
 
 /**

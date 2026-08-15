@@ -34,7 +34,7 @@
     <string name="reason_import">Configuration imported</string>
     <string name="reason_unchanged">Nothing to change</string>
 
-    <string name="diagnostics_title">Health</string>
+    <string name="diagnostics_title">Permissions</string>
     <string name="diagnostics_ok">Everything looks right</string>
     <string name="diagnostics_degraded">Some things need your attention</string>
     <string name="diagnostics_dnd">Do Not Disturb access</string>

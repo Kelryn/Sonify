@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ritmute.core.ui.component.SectionHeader
 import com.ritmute.core.ui.theme.RitMuteTheme
 import com.ritmute.feature.tools.R
 
@@ -71,15 +70,9 @@ fun DiagnosticsScreen(
                 .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState()),
         ) {
-            Text(
-                text = stringResource(
-                    if (report.degraded) R.string.diagnostics_degraded else R.string.diagnostics_ok,
-                ),
-                style = MaterialTheme.typography.headlineSmall,
-            )
-
-            SectionHeader(stringResource(R.string.diagnostics_title))
-
+            // No headline verdict and no repeated section title. The ticks and crosses below
+            // already say whether anything needs attention, and each row carries its own
+            // button; a sentence announcing the same thing was one more line to scroll past.
             CheckRow(
                 label = stringResource(R.string.diagnostics_dnd),
                 explanation = stringResource(R.string.diagnostics_dnd_why),

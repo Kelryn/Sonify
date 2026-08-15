@@ -111,6 +111,7 @@
     <string name="editor_save">Save</string>
     <string name="editor_add_schedule">Add a schedule</string>
     <string name="editor_stream_unsupported">Android does not let apps change this one</string>
+    <string name="editor_ring_silenced_by_mode">Silent and vibrate already silence the ringtone, so this volume is not used</string>
     <string name="editor_ring_coupled">On this device the ringtone and notification volumes move together</string>
     <string name="editor_dnd_mode">Mode</string>
     <string name="editor_dnd_release">Release</string>

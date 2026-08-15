@@ -60,6 +60,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ritmute.core.domain.model.AudioStream
 import com.ritmute.core.domain.model.DndMode
 import com.ritmute.core.domain.model.ProfileOptions
 import com.ritmute.core.domain.model.RingerMode
@@ -237,17 +238,26 @@ private fun VolumesSection(
         val stream = capability.stream
         val label = ScheduleFormatter.streamLabel(stream)
         val percent = profile.volumes[stream]
+
+        // A ringer mode of silent or vibrate drops volumes.ring to null on save — that is
+        // the model resolving a contradiction (docs/02, E-05), not a bug. What was a bug is
+        // that the editor accepted a ring volume anyway and threw it away without a word,
+        // which reads exactly like "this field does not work". So the row goes read-only and
+        // says why, and the value the user sees is the value that will be stored.
+        val silencedByRinger =
+            stream == AudioStream.RING && profile.ringerMode?.silencesRing == true
+
         VolumeSliderRow(
             label = label,
             icon = ScheduleFormatter.streamIcon(stream),
             percent = percent,
-            isSupported = capability.supported,
+            isSupported = capability.supported && !silencedByRinger,
             // Accessibility is listed and explained rather than hidden: silently dropping a
             // stream would look like a bug, and saying why is the honest version.
-            supportingText = if (!capability.supported) {
-                stringResource(R.string.editor_stream_unsupported)
-            } else {
-                null
+            supportingText = when {
+                silencedByRinger -> stringResource(R.string.editor_ring_silenced_by_mode)
+                !capability.supported -> stringResource(R.string.editor_stream_unsupported)
+                else -> null
             },
             enabledSwitchDescription = stringResource(R.string.editor_volume_toggle, label),
             valueDescription = stringResource(

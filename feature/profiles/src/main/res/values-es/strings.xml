@@ -106,6 +106,7 @@
     <string name="editor_save">Guardar</string>
     <string name="editor_add_schedule">Añadir un horario</string>
     <string name="editor_stream_unsupported">Android no permite que las apps cambien este</string>
+    <string name="editor_ring_silenced_by_mode">Silencio y vibración ya silencian el tono, así que este volumen no se usa</string>
     <string name="editor_ring_coupled">En este dispositivo el tono y las notificaciones se mueven juntos</string>
     <string name="editor_dnd_mode">Modo</string>
     <string name="editor_dnd_release">Liberar</string>
