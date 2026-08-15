@@ -66,11 +66,21 @@ class ProfileChangeNotifierImpl @Inject constructor(
             .setCategory(NotificationCompat.CATEGORY_STATUS)
             .build()
 
-        runCatching { manager.notify(NOTIFICATION_ID, notification) }
+        // try/catch rather than runCatching: lint cannot follow the call into a lambda, and
+        // the permission can also be revoked between the check above and this line.
+        try {
+            manager.notify(NOTIFICATION_ID, notification)
+        } catch (denied: SecurityException) {
+            // Nothing to do and nothing to report: the profile was applied either way.
+        }
     }
 
     override fun clear() {
-        runCatching { manager.cancel(NOTIFICATION_ID) }
+        try {
+            manager.cancel(NOTIFICATION_ID)
+        } catch (denied: SecurityException) {
+            // Same: withdrawing a note that may never have been posted is best-effort.
+        }
     }
 
     private fun ensureChannel() {
