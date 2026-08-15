@@ -20,6 +20,7 @@ import com.ritmute.core.system.audio.AudioStateSnapshotter
 import com.ritmute.core.system.audio.ProfileAudioApplier
 import com.ritmute.core.system.dnd.DndController
 import com.ritmute.core.system.dnd.RuleStatus
+import com.ritmute.core.system.notification.ProfileChangeNotifier
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -74,6 +75,7 @@ class SchedulerCoordinator @Inject constructor(
     private val dndController: DndController,
     private val snapshotter: AudioStateSnapshotter,
     private val healthStore: SchedulerHealthStore,
+    private val notifier: ProfileChangeNotifier,
     private val timeSource: TimeSource,
     private val zoneProvider: ZoneProvider,
 ) {
@@ -231,6 +233,12 @@ class SchedulerCoordinator @Inject constructor(
                             scheduleUuid = action.scheduleUuid,
                             success = report.success,
                         )
+                        // Not on a watchdog repair: the profile did not change, the device
+                        // drifted, and re-announcing something the user already knows is
+                        // exactly the noise this app exists to avoid.
+                        if (!alreadyApplied && report.success && action.profile.options.notifyOnApply) {
+                            notifier.notifyApplied(action.profile.name)
+                        }
                     }
                 }
             }
@@ -248,6 +256,9 @@ class SchedulerCoordinator @Inject constructor(
                     scheduleUuid = world.automation.appliedScheduleUuid,
                     success = report.success,
                 )
+                // Nothing is active any more, so the note has to go with it. A stale "Night
+                // is on" sitting in the shade at noon is worse than never having posted it.
+                notifier.clear()
             }
 
             ReconciliationAction.ReleaseOnly -> {
@@ -263,6 +274,7 @@ class SchedulerCoordinator @Inject constructor(
                         success = true,
                     )
                 }
+                notifier.clear()
             }
 
             ReconciliationAction.Nothing -> {
@@ -375,6 +387,10 @@ class SchedulerCoordinator @Inject constructor(
                     separator = "\",\"",
                     postfix = "\"]}",
                 ) { it.name },
+                // Also in `detail`, which is the field the history screen renders. The JSON
+                // above is for machines; without this line the user is told the phone
+                // ignored a write and never which one, which is unactionable.
+                detail = ignored.joinToString(", ") { it.name },
             )
         } else {
             val worst = report?.worstReason

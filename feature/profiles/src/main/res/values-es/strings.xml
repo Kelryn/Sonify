@@ -100,6 +100,7 @@
     <string name="editor_restore_on_exit">Restaurar el sonido anterior al terminar</string>
     <string name="editor_skip_during_call">No cambiar nada durante una llamada</string>
     <string name="editor_skip_media">No bajar multimedia si hay algo sonando</string>
+    <string name="editor_notify_on_apply">Avisarme cuando se active este perfil</string>
     <string name="editor_transition">Transición de %1$d s</string>
     <string name="editor_transition_none">Cambio instantáneo</string>
     <string name="editor_save">Guardar</string>

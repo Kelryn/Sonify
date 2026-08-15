@@ -9,4 +9,10 @@
     <string name="core_system_channel_transitions">Profile changes</string>
     <string name="core_system_channel_transitions_description">Shown briefly while a scheduled sound profile is being applied.</string>
     <string name="core_system_applying_profile">Applying sound profile…</string>
+
+    <!-- Opt-in per profile. Separate channel from the foreground-service one so the user can
+         silence the announcements without silencing the thing the platform insists on. -->
+    <string name="core_system_channel_changes">Active profile</string>
+    <string name="core_system_applied_title">%1$s is on</string>
+    <string name="core_system_applied_text">Your sound settings just changed</string>
 </resources>

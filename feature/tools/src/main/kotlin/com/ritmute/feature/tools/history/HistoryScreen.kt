@@ -102,6 +102,17 @@ private fun LogRow(entry: ActivityLogEntry) {
             entry.profileNameSnapshot?.let {
                 Text(text = it, style = MaterialTheme.typography.bodyMedium)
             }
+            // The diagnostic the entry already carried and no screen ever showed: which
+            // streams the phone ignored, which streams drifted, which exception was caught.
+            // "Android ignored the change" without naming the stream is unactionable, and
+            // it is the one line that makes a bug report from a stranger's phone usable.
+            entry.detail?.takeIf { it.isNotBlank() }?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Text(
                 // Rendered in the offset that was in force when it happened, not today's.
                 // "Why did it go silent at 3am?" is unanswerable otherwise once the user

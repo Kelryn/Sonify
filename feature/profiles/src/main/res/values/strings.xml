@@ -105,6 +105,7 @@
     <string name="editor_restore_on_exit">Restore previous sound when it ends</string>
     <string name="editor_skip_during_call">Do not change anything during a call</string>
     <string name="editor_skip_media">Do not lower media while something is playing</string>
+    <string name="editor_notify_on_apply">Notify me when this profile turns on</string>
     <string name="editor_transition">Fade over %1$d s</string>
     <string name="editor_transition_none">Change instantly</string>
     <string name="editor_save">Save</string>

@@ -3,4 +3,8 @@
     <string name="core_system_channel_transitions">Cambios de perfil</string>
     <string name="core_system_channel_transitions_description">Se muestra brevemente mientras se aplica un perfil de sonido programado.</string>
     <string name="core_system_applying_profile">Aplicando perfil de sonido…</string>
+
+    <string name="core_system_channel_changes">Perfil activo</string>
+    <string name="core_system_applied_title">%1$s está activo</string>
+    <string name="core_system_applied_text">Se acaban de cambiar tus ajustes de sonido</string>
 </resources>

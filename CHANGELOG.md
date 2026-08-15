@@ -2,6 +2,26 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [2.1.0] — 2026-08-15
+
+### Añadido
+
+- **Aviso opcional al activarse un perfil.** El interruptor está en las opciones de cada
+  perfil, así que puedes avisar solo con los que te importan. Usa un canal propio y silencioso
+  —sin sonido ni vibración—, porque una notificación que pita para anunciar que acaba de
+  silenciarte el móvil sería absurda. El aviso se retira solo cuando el perfil termina.
+  El permiso de notificaciones se pide **al activar el interruptor**, no al abrir el editor.
+- **El historial dice qué stream falló.** El dato ya se guardaba y ninguna pantalla lo
+  mostraba: «Android ignoró el cambio» sin decir cuál es inaccionable, y es justo la línea que
+  hace útil el informe de alguien a quien no le puedes mirar el móvil.
+
+### Corregido
+
+- **La verificación de escritura era ciega al silenciado.** Se comprobaba el índice de volumen
+  con `getStreamVolume` y nunca `isStreamMute`. Hay dispositivos donde un stream silenciado no
+  devuelve 0 sino el nivel que restaurará al reactivarse; ahí, pedir silencio parecía una
+  escritura ignorada y la app acusaba al teléfono de mentir cuando había obedecido.
+
 ## [2.0.0] — 2026-08-15
 
 **La aplicación pasa a llamarse RitMute** (*ritmo* + *mute*), y su identificador es

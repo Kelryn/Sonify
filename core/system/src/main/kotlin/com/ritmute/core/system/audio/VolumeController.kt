@@ -96,6 +96,12 @@ class VolumeControllerImpl @Inject constructor(
             // not a failure — the device did change.
             after != before -> AudioOpResult.Clamped(index, after, ClampReason.SAFE_MEDIA_VOLUME)
 
+            // Asking for silence on a stream the platform has muted is obeyed, even where
+            // the index reads back unchanged: some devices keep reporting the level they
+            // will restore on unmute. Without this the app calls the phone a liar for
+            // doing exactly what it was told.
+            target <= min && capabilities.isMuted(stream) -> AudioOpResult.Applied(after)
+
             else -> AudioOpResult.SilentlyIgnored(requestedIndex = target, observedIndex = after)
         }
     }

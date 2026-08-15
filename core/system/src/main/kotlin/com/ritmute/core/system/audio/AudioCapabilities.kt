@@ -86,6 +86,17 @@ interface AudioCapabilities {
 
     fun currentIndex(stream: AudioStream): Int
 
+    /**
+     * Whether the platform currently has the stream muted.
+     *
+     * Needed because [currentIndex] alone cannot tell "the write was ignored" from "the
+     * write succeeded by silencing the stream". Devices differ on what `getStreamVolume`
+     * reports for a muted stream: some return 0, others keep returning the level they will
+     * restore on unmute. On the second kind, a request for zero looks exactly like a
+     * swallowed write, and the app would accuse the phone of lying when it had obeyed.
+     */
+    fun isMuted(stream: AudioStream): Boolean
+
     fun levelOf(stream: AudioStream): StreamLevel
 
     fun isWritable(stream: AudioStream): Boolean
@@ -132,6 +143,9 @@ class AudioCapabilitiesImpl @Inject constructor(
 
     override fun currentIndex(stream: AudioStream): Int =
         audioManager.getStreamVolume(AndroidStreams.idOf(stream))
+
+    override fun isMuted(stream: AudioStream): Boolean =
+        audioManager.isStreamMute(AndroidStreams.idOf(stream))
 
     override fun levelOf(stream: AudioStream): StreamLevel = StreamLevel(
         steps = currentIndex(stream),

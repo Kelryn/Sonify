@@ -37,6 +37,8 @@ import com.ritmute.core.system.ports.RandomUuidGenerator
 import com.ritmute.core.system.ports.SystemTimeSource
 import com.ritmute.core.system.ports.SystemZoneProvider
 import com.ritmute.core.system.scheduler.AlarmScheduler
+import com.ritmute.core.system.notification.ProfileChangeNotifier
+import com.ritmute.core.system.notification.ProfileChangeNotifierImpl
 import com.ritmute.core.system.scheduler.AlarmSchedulerImpl
 import com.ritmute.core.system.scheduler.SchedulerHealthPreferences
 import com.ritmute.core.system.scheduler.SchedulerHealthStore
@@ -165,4 +167,7 @@ abstract class SystemModule {
 
     @Binds
     abstract fun bindAlarmScheduler(impl: AlarmSchedulerImpl): AlarmScheduler
+
+    @Binds
+    abstract fun bindProfileChangeNotifier(impl: ProfileChangeNotifierImpl): ProfileChangeNotifier
 }

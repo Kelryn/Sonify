@@ -1,6 +1,10 @@
 package com.ritmute.feature.profiles.editor
 
+import android.Manifest
+import android.os.Build
 import android.text.format.DateFormat
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -550,6 +554,24 @@ private fun OptionsSection(profile: SoundProfile, viewModel: ProfileEditorViewMo
         label = stringResource(R.string.editor_skip_media),
         checked = profile.options.skipIfMediaPlaying,
         onCheckedChange = { checked -> viewModel.onOptionsChange { it.copy(skipIfMediaPlaying = checked) } },
+    )
+
+    // Asked for only when the switch is turned on, never on opening the editor: a permission
+    // prompt for something the user has not asked for is how apps train people to say no.
+    // The result is ignored on purpose — denial is a valid answer, the profile still applies,
+    // and the only thing lost is the note.
+    val notificationPermission = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { }
+    ToggleRow(
+        label = stringResource(R.string.editor_notify_on_apply),
+        checked = profile.options.notifyOnApply,
+        onCheckedChange = { checked ->
+            viewModel.onOptionsChange { it.copy(notifyOnApply = checked) }
+            if (checked && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        },
     )
 
     Text(
