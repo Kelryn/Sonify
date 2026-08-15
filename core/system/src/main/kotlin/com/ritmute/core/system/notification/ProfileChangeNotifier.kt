@@ -45,7 +45,14 @@ class ProfileChangeNotifierImpl @Inject constructor(
         // POST_NOTIFICATIONS is a runtime permission from API 33. Denied is a normal state,
         // not an error: the profile still applies, and the only thing lost is the note.
         // Posting without the check throws SecurityException inside a broadcast receiver.
-        if (!hasPermission()) return
+        //
+        // Written inline rather than behind a helper because lint's dataflow only recognises
+        // the guard when it sits in the same function as the call it protects.
+        val granted = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS,
+        ) == PackageManager.PERMISSION_GRANTED
+        if (!granted) return
 
         ensureChannel()
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
@@ -65,10 +72,6 @@ class ProfileChangeNotifierImpl @Inject constructor(
     override fun clear() {
         runCatching { manager.cancel(NOTIFICATION_ID) }
     }
-
-    private fun hasPermission(): Boolean =
-        ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
-            PackageManager.PERMISSION_GRANTED
 
     private fun ensureChannel() {
         val system = context.getSystemService(NotificationManager::class.java) ?: return
