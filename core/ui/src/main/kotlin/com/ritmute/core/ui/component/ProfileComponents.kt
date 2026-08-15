@@ -1,5 +1,6 @@
 package com.ritmute.core.ui.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -116,6 +117,11 @@ fun ProfileCard(
         onClick = onActivate,
         enabled = isEnabled,
         shape = RoundedCornerShape(16.dp),
+        // Measured, not guessed: without this the card separated from the background by 22
+        // points of luminance in the light theme against 45 in the dark one, and that was
+        // the *active* card, which is tinted. An inactive one is `surface` on `surface`, so
+        // it had no boundary at all. The outline gives every card the same edge in both.
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         colors = CardDefaults.cardColors(
             containerColor = if (isActive) {
                 MaterialTheme.colorScheme.secondaryContainer
